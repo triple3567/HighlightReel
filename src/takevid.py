@@ -12,6 +12,9 @@ def main():
     frameRate = 10.0
     videoDimensions = (640,480)
     videoWriter = cv2.VideoWriter("../videos/" + outFilename, fourCC, frameRate, videoDimensions)
+    
+    #videoWriter2 = cv2.VideoWriter("../videos/2-" + outFilename, fourCC, frameRate, videoDimensions)
+
     recordingLength = 15
     endTime = startTime + recordingLength
 
@@ -20,6 +23,7 @@ def main():
 
         if isFrameCaptured:
             videoWriter.write(frame)
+            #videoWriter2.write(frame)
     
         currentTime = time.time()
         if endTime < currentTime:
@@ -27,6 +31,7 @@ def main():
     
     videoCapturer.release()
     videoWriter.release()
+    #videoWriter2.release()
 
 
 
