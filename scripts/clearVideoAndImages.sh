@@ -1,2 +1,2 @@
-rm ../images/*
-rm ../videos/*
+rm ../frames/*
+rm ../archive/*

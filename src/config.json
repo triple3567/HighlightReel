@@ -1,0 +1,15 @@
+{
+    "frameFolder" : "/home/pi/HighlightReel/frames/",
+    "archiveFolder": "/home/pi/HighlightReel/archive/",
+    "cameraIDs": [
+        "0",
+        "4"
+    ],
+    "framesPerSecond": "25.0",
+    "videoLengthSeconds": "30.0",
+    "maxVideosStored": "1",
+    "dimensions": {
+        "width": "1920",
+        "height": "1080"
+    }
+}
