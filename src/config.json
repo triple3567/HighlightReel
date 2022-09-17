@@ -1,15 +1,29 @@
 {
-    "frameFolder" : "/home/pi/HighlightReel/frames/",
-    "archiveFolder": "/home/pi/HighlightReel/archive/",
-    "cameraIDs": [
-        "0",
-        "4"
+    "cameras": [
+        {
+            "deviceID": "0",
+            "frameFolder": "/home/pi/HighlightReel/frames0/",
+            "archiveFolder": "/home/pi/HighlightReel/archive0/"
+        },
+        {
+            "deviceID": "4",
+            "frameFolder": "/home/pi/HighlightReel/frames4/",
+            "archiveFolder": "/home/pi/HighlightReel/archive4/"
+        }
     ],
-    "framesPerSecond": "25.0",
-    "videoLengthSeconds": "30.0",
+    "outFolder": "/home/pi/HighlightReel/out/",
+    "bitrate": "10000000",
+    "framesPerSecond": "30.0",
+    "videoLengthSeconds": "5.0",
     "maxVideosStored": "1",
-    "dimensions": {
+    "maxDimensions": {
         "width": "1920",
         "height": "1080"
-    }
+    },
+    "minDimensions": {
+        "width": "640",
+        "height": "480"
+    },
+    "encoderChannels": "RGB888",
+    "databasePath": "/home/pi/HighlightReel/db/frames.db"
 }

@@ -1,0 +1,5 @@
+v4l2-ctl --all --device /dev/video0
+v4l2-ctl --set-fmt-video=width=1920,height=1080,pixelformat=MJPG
+
+libcamera-still -o /home/pi/HighlightReel/images/test.jpg
+libcamera-still -t 600000
