@@ -2,6 +2,7 @@ videos/*
 images/s*
 frames/*
 archive/*
+out/*
 
 
 # Byte-compiled / optimized / DLL files
