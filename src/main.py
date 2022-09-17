@@ -1,104 +1,51 @@
-import cv2
+from picamera2.encoders import H264Encoder
+from picamera2.outputs import CircularOutput
+from picamera2 import Picamera2
+from datetime import datetime
 import time
-import queue
-import os
 import json
-import glob
-import sys
-import sqlite3
 
-cameraID = int(sys.argv[1])
+#
+# READ CONFIG FILE AND INITIALIZE VARIABLES
+#
 file = open("config.json")
 config = json.loads(file.read())
-
-deviceID = int(config["cameras"][cameraID]["deviceID"])
 framesPerSecond = float(config["framesPerSecond"])
+minFrameDurationLimit = int(1000000 / framesPerSecond)
+maxFrameDurationLimit = int(1000000 / framesPerSecond)
 videoLengthSeconds = float(config["videoLengthSeconds"])
-framesPerVideo = framesPerSecond * videoLengthSeconds
-videoCapturer = cv2.VideoCapture(deviceID,cv2.CAP_V4L)
-videoCapturer.set(cv2.CAP_PROP_FRAME_WIDTH, float(config["dimensions"]["width"]))
-#videoCapturer.set(cv2.CAP_PROP_FRAME_HEIGHT, float(config["dimensions"]["height"]))
-#videoCapturer.set(cv2.CAP_PROP_FPS, framesPerSecond)
+videoBitrate = int(config["bitrate"])
+maxDimensions = (int(config["maxDimensions"]["width"]), int(config["maxDimensions"]["height"]))
+minDimensions = (int(config["minDimensions"]["width"]), int(config["minDimensions"]["height"]))
+encoderChannels = config["encoderChannels"]
+outFolder = config["outFolder"]
+filename = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+fileExtension = config["fileExtension"]
+outfile = outFolder + filename + fileExtension
+TEMP_SLEEP_TIME = 10
 
-print(videoCapturer.get(cv2.CAP_PROP_FRAME_WIDTH))
-
-folderPath = config["cameras"][cameraID]["frameFolder"]
-archivePath = config["cameras"][cameraID]["archiveFolder"]
-maxVideosStored = int(config["maxVideosStored"])
-frameQueue = queue.Queue(maxsize=framesPerVideo * maxVideosStored)
-databasePath = config["databasePath"]
-dbConnection = sqlite3.connect(databasePath)
-cursor = dbConnection.cursor()
-
-def insertFrameInDB(frameName, timestamp):
-    insertStatement = f"INSERT INTO frames VALUES (\"{frameName}\", {timestamp}, {cameraID});"
-    #print(insertStatement)
-    cursor.execute(insertStatement)
-    dbConnection.commit()
-
-
-def makeDatabase():
-    cursor.execute("CREATE TABLE IF NOT EXISTS frames(filename TEXT, timestamp REAL, cameraID INT);")
-    dbConnection.commit()
-
-def makeFoldersIfNotExist():
-    isFolderExist = os.path.exists(folderPath)
-    isArchiveExist = os.path.exists(archivePath)
-
-    if not isFolderExist:
-        os.makedirs(folderPath)
-
-    if not isArchiveExist:
-        os.makedirs(archivePath)
-
-def getFrameName():
-    timestamp = time.time()
-    return timestamp, str(timestamp) + ".jpeg"
-
-def recordFrame():
-    ret, frame = videoCapturer.read()
-    timestamp, frameName = getFrameName()
-    framePath = folderPath + frameName
-    cv2.imwrite(framePath, frame)
-    frameQueue.put(frameName)
-    insertFrameInDB(frameName, timestamp)
-
-def moveOldestFrame():
-    if frameQueue.full():
-        fileToMove = frameQueue.get()
-        os.rename(folderPath + fileToMove, archivePath + fileToMove)
-        #print("moved: " + fileToMove)
-    else:
-        return
-
-def deleteOldestFrame():
-    if frameQueue.full():
-        fileToMove = frameQueue.get()
-        os.remove(folderPath + fileToMove)
-        #print("deleted: " + fileToMove)
-    else:
-        return
-
-def clearDatabaseAndFrames():
-    videoFiles = glob.glob(folderPath + "*")
-    archiveFiles = glob.glob(archivePath + "*")
-    for f in videoFiles:
-        os.remove(f)
-    for f in archiveFiles:
-        os.remove(f)
+#
+# INITIALIZE CAMERA ENDCODER AND OUTPUT OBJECTS
+#
+picam2 = Picamera2()
+video_config = picam2.create_video_configuration(main={"size": maxDimensions, "format": encoderChannels}, lores={"size": minDimensions, "format": "YUV420"}, controls={"NoiseReductionMode": 2, "FrameDurationLimits": (minFrameDurationLimit, maxFrameDurationLimit)})
+picam2.configure(video_config)
+encoder = H264Encoder(bitrate=videoBitrate, repeat=False)
+output = CircularOutput(buffersize=int(framesPerSecond*videoLengthSeconds), pts="timestamps.txt")
+encoder.output = output
+picam2.encoder = encoder
 
 def main():
-    makeFoldersIfNotExist()
-    makeDatabase()
-    clearDatabaseAndFrames()
-    previousFrameTime = -1
+    
+    picam2.start()
+    picam2.start_encoder()
+    time.sleep(TEMP_SLEEP_TIME)
 
-    while True:
-        timeElapesd = time.time() - previousFrameTime
-        if timeElapesd > 1.0 / framesPerSecond:
-            previousFrameTime = time.time()
-            deleteOldestFrame()
-            recordFrame()
+    output.fileoutput = outfile
+    output.start()
+    time.sleep(TEMP_SLEEP_TIME)
+    picam2.stop()
+    print(output.fileoutput)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -1,16 +1,4 @@
 {
-    "cameras": [
-        {
-            "deviceID": "0",
-            "frameFolder": "/home/pi/HighlightReel/frames0/",
-            "archiveFolder": "/home/pi/HighlightReel/archive0/"
-        },
-        {
-            "deviceID": "4",
-            "frameFolder": "/home/pi/HighlightReel/frames4/",
-            "archiveFolder": "/home/pi/HighlightReel/archive4/"
-        }
-    ],
     "outFolder": "/home/pi/HighlightReel/out/",
     "bitrate": "10000000",
     "framesPerSecond": "30.0",
@@ -25,5 +13,5 @@
         "height": "480"
     },
     "encoderChannels": "RGB888",
-    "databasePath": "/home/pi/HighlightReel/db/frames.db"
+    "fileExtension": ".h264"
 }
