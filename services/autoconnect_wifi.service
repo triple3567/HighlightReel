@@ -1,0 +1,15 @@
+[Unit]
+Description=Autoconnect wifi with connmanctl
+After=NetworkManager.service time-sync.target
+
+[Service]
+Type=simple
+User=pi
+
+
+ExecStart=/bin/bash /home/pi/HighlightReel/services/autoconnect_wifi
+RestartSec=60
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
