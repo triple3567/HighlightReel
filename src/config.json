@@ -13,5 +13,6 @@
         "height": "480"
     },
     "encoderChannels": "RGB888",
-    "fileExtension": ".h264"
+    "fileExtension": ".h264",
+    "recieverGPIO": "27"
 }
