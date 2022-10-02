@@ -2,7 +2,7 @@
     "outFolder": "/home/pi/HighlightReel/out/",
     "bitrate": "10000000",
     "framesPerSecond": "30.0",
-    "videoLengthSeconds": "5.0",
+    "videoLengthSeconds": "30.0",
     "maxVideosStored": "1",
     "maxDimensions": {
         "width": "1920",

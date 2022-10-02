@@ -16,7 +16,7 @@ output = CircularOutput(buffersize=int(150), pts="timestamps.txt")
 picam2.start_recording(encoder, output)
 time.sleep(10)
 
-output.fileoutput = "recording.h264"
+output.fileoutput = "/home/pi/HighlightReel/out/recording.h264"
 output.start()
 time.sleep(10)
 output.stop()
