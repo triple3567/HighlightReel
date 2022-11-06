@@ -1,13 +1,10 @@
+from receiverHandler import receiverHandler
+from videoUploader import videoUploader
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import CircularOutput
 from picamera2 import Picamera2
 from datetime import datetime
-from rpi_rf import RFDevice
-import time
-import json
-import logging
-import signal
-import sys
+import time, json, logging, sys
 
 #
 # READ CONFIG FILE AND INITIALIZE VARIABLES
@@ -24,10 +21,10 @@ MIN_DIMENSIONS = (int(CONFIG["minDimensions"]["width"]), int(CONFIG["minDimensio
 ENCODER_CHANNELS = CONFIG["encoderChannels"]
 OUT_FOLDER = CONFIG["outFolder"]
 FILE_EXTENSION = CONFIG["fileExtension"]
-TEMP_SLEEP_TIME = 2
-RX_GPIO_PIN = int(CONFIG["recieverGPIO"])
+OUTPUT_START_SLEEP_TIME = 10
+OUTPUT_STOP_SLEEP_TIME = 2
+OUTPUT_RESET_SLEEP_TIME = 30
 outfile = None
-rfdevice = RFDevice(RX_GPIO_PIN)
 logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S',
                     format='%(asctime)-15s - [%(levelname)s] %(module)s: %(message)s', )
 
@@ -39,9 +36,12 @@ def getOutfile():
     return outfile
 
 def exithandler(signal, frame):
-    rfdevice.cleanup()
     sys.exit(0)
 
+def uploadVideo(outfile):
+    uploader = videoUploader() 
+    uploader.setVideo(outfile)
+    uploader.start()
 
 def main():
     #
@@ -53,37 +53,35 @@ def main():
     encoder = H264Encoder(bitrate=VIDEO_BITRATE)
     output = CircularOutput(buffersize=int(FRAMES_PER_SECOND*VIDEO_LENGTH))
     picam2.start_recording(encoder, output)
-    time.sleep(10)
+
+    print("Filling camera buffer...")
+    time.sleep(OUTPUT_RESET_SLEEP_TIME)
 
     #
     # INITIALIZE RF RECIEVER
     #
-    rfdevice.enable_rx()
-    transmission_timestamp = None
+    input = receiverHandler()
 
 
     print("Listening for codes on reciever")
     while True:
         
 
-        if rfdevice.rx_code_timestamp != transmission_timestamp and int(rfdevice.rx_code) == 123:
-            transmission_timestamp = rfdevice.rx_code_timestamp
-            logging.info(str(rfdevice.rx_code) +
-                        " [pulselength " + str(rfdevice.rx_pulselength) +
-                        ", protocol " + str(rfdevice.rx_proto) + "]")
+        if input.isTriggered():
             print("Starting output")
-            output.fileoutput = getOutfile()
+            outfile = getOutfile()
+            output.fileoutput = outfile
             output.start()
-            time.sleep(TEMP_SLEEP_TIME)
+            time.sleep(OUTPUT_START_SLEEP_TIME)
             print("Stopping output")
             output.stop()
-            time.sleep(TEMP_SLEEP_TIME)
+            time.sleep(OUTPUT_STOP_SLEEP_TIME)
+            uploadVideo(outfile)
             print("Resetting output")
+            outfile = ""
             output.fileoutput = None
-            time.sleep(TEMP_SLEEP_TIME)
-            print("HERE2")
-        elif rfdevice.rx_code_timestamp != transmission_timestamp and int(rfdevice.rx_code) == 321:
-            sys.exit(0)
+            time.sleep(OUTPUT_RESET_SLEEP_TIME)
+            print("Ready to record again.")
         time.sleep(0.01)
 
 if __name__ == '__main__':
