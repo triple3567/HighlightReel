@@ -15,5 +15,7 @@ class videoUploader(threading.Thread):
         self.videoName = os.path.basename(outfile)
     
     def run(self):
+        print(f"uploading video[{self.videoName}] to HRCore")
         with open(self.videoPath, 'rb') as f:
             r = requests.post(self.httpPostRequestUri, files={self.videoName: f})
+        print(f"success uploading video[{self.videoName}]")

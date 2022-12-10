@@ -2,37 +2,15 @@ from receiverHandler import receiverHandler
 from videoUploader import videoUploader
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import CircularOutput
+from configReader import configReader
 from picamera2 import Picamera2
 from datetime import datetime
 import time, json, logging, sys
 
-#
-# READ CONFIG FILE AND INITIALIZE VARIABLES
-#
-CONFIG_FILE = open("config.json")
-CONFIG = json.loads(CONFIG_FILE.read())
-FRAMES_PER_SECOND = float(CONFIG["framesPerSecond"])
-MIN_FRAME_DURATION_LIMIT = int(1000000 / FRAMES_PER_SECOND)
-MAX_FRAME_DURATION_LIMIT = int(1000000 / FRAMES_PER_SECOND)
-VIDEO_LENGTH = float(CONFIG["videoLengthSeconds"])
-VIDEO_BITRATE = int(CONFIG["bitrate"])
-MAX_DIMENSIONS = (int(CONFIG["maxDimensions"]["width"]), int(CONFIG["maxDimensions"]["height"]))
-MIN_DIMENSIONS = (int(CONFIG["minDimensions"]["width"]), int(CONFIG["minDimensions"]["height"]))
-ENCODER_CHANNELS = CONFIG["encoderChannels"]
-OUT_FOLDER = CONFIG["outFolder"]
-FILE_EXTENSION = CONFIG["fileExtension"]
-OUTPUT_START_SLEEP_TIME = 10
-OUTPUT_STOP_SLEEP_TIME = 2
-OUTPUT_RESET_SLEEP_TIME = 30
-outfile = None
-logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S',
-                    format='%(asctime)-15s - [%(levelname)s] %(module)s: %(message)s', )
-
-
 # Get filename
-def getOutfile():
+def getOutfile(outfolder, fileExtension):
     filename = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    outfile = OUT_FOLDER + filename + FILE_EXTENSION
+    outfile = outfolder + filename + fileExtension
     return outfile
 
 def exithandler(signal, frame):
@@ -44,43 +22,43 @@ def uploadVideo(outfile):
     uploader.start()
 
 def main():
-    #
+    # READ CONFIG FILE AND INITIALIZE VARIABLES
+    config = configReader("config.json")
+    config.readConfig()
+    outfile = None
+    logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S',
+                        format='%(asctime)-15s - [%(levelname)s] %(module)s: %(message)s', )
+
     # INITIALIZE CAMERA ENDCODER AND OUTPUT OBJECTS
-    #  
     picam2 = Picamera2()
-    video_config = picam2.create_video_configuration(main={"size": MAX_DIMENSIONS, "format": ENCODER_CHANNELS}, lores={"size": MIN_DIMENSIONS, "format": "YUV420"}, controls={"NoiseReductionMode": 2, "FrameDurationLimits": (MIN_FRAME_DURATION_LIMIT, MAX_FRAME_DURATION_LIMIT)})
+    video_config = picam2.create_video_configuration(main={"size": config.MAX_DIMENSIONS, "format": config.ENCODER_CHANNELS}, lores={"size": config.MIN_DIMENSIONS, "format": "YUV420"}, controls={"NoiseReductionMode": 2, "FrameDurationLimits": (config.MIN_FRAME_DURATION_LIMIT, config.MAX_FRAME_DURATION_LIMIT)})
     picam2.configure(video_config)
-    encoder = H264Encoder(bitrate=VIDEO_BITRATE)
-    output = CircularOutput(buffersize=int(FRAMES_PER_SECOND*VIDEO_LENGTH))
+    encoder = H264Encoder(bitrate=config.VIDEO_BITRATE)
+    output = CircularOutput(buffersize=int(config.FRAMES_PER_SECOND*config.VIDEO_LENGTH))
     picam2.start_recording(encoder, output)
-
     print("Filling camera buffer...")
-    time.sleep(OUTPUT_RESET_SLEEP_TIME)
+    time.sleep(config.OUTPUT_RESET_SLEEP_TIME)
 
-    #
     # INITIALIZE RF RECIEVER
-    #
     input = receiverHandler()
 
-
+    # MAIN LOOP
     print("Listening for codes on reciever")
     while True:
-        
-
         if input.isTriggered():
             print("Starting output")
-            outfile = getOutfile()
+            outfile = getOutfile(config.OUT_FOLDER, config.FILE_EXTENSION)
             output.fileoutput = outfile
             output.start()
-            time.sleep(OUTPUT_START_SLEEP_TIME)
+            time.sleep(config.OUTPUT_START_SLEEP_TIME)
             print("Stopping output")
             output.stop()
-            time.sleep(OUTPUT_STOP_SLEEP_TIME)
+            time.sleep(config.OUTPUT_STOP_SLEEP_TIME)
             uploadVideo(outfile)
             print("Resetting output")
             outfile = ""
             output.fileoutput = None
-            time.sleep(OUTPUT_RESET_SLEEP_TIME)
+            time.sleep(config.OUTPUT_RESET_SLEEP_TIME)
             print("Ready to record again.")
         time.sleep(0.01)
 
