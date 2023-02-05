@@ -1,2 +1,0 @@
-#!/bin/bash
-connmanctl connect wifi_1cbfce109733_42726f616473746f6e6533303230_managed_psk

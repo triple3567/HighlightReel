@@ -1,7 +1,7 @@
-videos/*
-images/s*
-frames/*
-archive/*
+core/videos/*
+core/images/s*
+core/frames/*
+core/archive/*
 out/*
 
 
