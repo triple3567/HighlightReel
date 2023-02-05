@@ -1,12 +1,13 @@
 from receiverHandler import receiverHandler
 from videoUploader import videoUploader
+from videoWriter import videoWriter
 from configReader import configReader
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import CircularOutput
 from picamera2 import Picamera2
 from datetime import datetime
 from systemd.journal import JournalHandler
-import time, json, logging, sys, argparse
+import time, json, logging, sys, argparse, copy
 
 # Get filename
 def getOutfile(outfolder, fileExtension):
@@ -83,26 +84,12 @@ def main():
     sys.stdout.flush()
     while True:
         if input.isTriggered():
-            print("Starting output")
-            outfile = getOutfile(config.QUEUE_FOLDER, config.FILE_EXTENSION)
-            output.fileoutput = outfile
-            output.start()
-            time.sleep(config.OUTPUT_START_SLEEP_TIME)
+            output_copy = copy.copy(output)
+            output_copy._circular = output._circular.copy()
+            writer = videoWriter(config, output_copy, args.supress_upload)
+            writer.start()
 
-            print("Stopping output")
-            output.stop()
-            time.sleep(config.OUTPUT_STOP_SLEEP_TIME)
-
-            if not args.supress_upload:
-                uploadVideo(outfile, config)
-
-            print("Resetting output")
-            outfile = ""
-            output.fileoutput = None
-            time.sleep(config.OUTPUT_RESET_SLEEP_TIME)
-
-            print("Ready to record again.")
-            sys.stdout.flush()
+            time.sleep(2) #temporary delay between records until multi transmitter support is implimented.
         time.sleep(0.01)
 
 if __name__ == '__main__':

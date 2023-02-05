@@ -2,11 +2,12 @@ import json, threading, requests, os
 from subprocess import call 
 
 class videoUploader(threading.Thread):
-    def __init__(self, config):
+    def __init__(self, config, supress_upload):
         # calling parent class constructor
         threading.Thread.__init__(self)
 
         self.config = config
+        self.supress_upload = supress_upload
         self.videoPath = ""
         self.videoName = ""
         self.videoNameNoExtention = ""
@@ -54,21 +55,22 @@ class videoUploader(threading.Thread):
             "serialNumber": serialNumber
         }
 
-        print(f"uploading video[{self.mp4FileName}] to HRCore")
+        
+        if not self.supress_upload:
+            with open(self.mp4File, 'rb') as f:
+                print(f"uploading video[{self.mp4FileName}] to HRCore")
+                r = requests.post(
+                    self.httpPostRequestUri, 
+                    files={self.mp4FileName: f}, 
+                    data=metadata
+                )
 
-        with open(self.mp4File, 'rb') as f:
-            r = requests.post(
-                self.httpPostRequestUri, 
-                files={self.mp4FileName: f}, 
-                data=metadata
-            )
+                response = r.json()
 
-            response = r.json()
-
-            if response["status"] == "error":
-                print(f"error uploading video[{self.mp4FileName}]")
-                message = response["message"]
-                print(f"message: {message}")
-            else:
-                print(f"success uploading video[{self.mp4FileName}]")
-                os.rename(self.mp4File, self.config.SENT_FOLDER + self.mp4FileName)
+                if response["status"] == "error":
+                    print(f"error uploading video[{self.mp4FileName}]")
+                    message = response["message"]
+                    print(f"message: {message}")
+                else:
+                    print(f"success uploading video[{self.mp4FileName}]")
+                    os.rename(self.mp4File, self.config.SENT_FOLDER + self.mp4FileName)

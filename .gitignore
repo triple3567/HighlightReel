@@ -1,8 +1,4 @@
-core/videos/*
-core/images/s*
-core/frames/*
-core/archive/*
-out/*
+core/out/*
 
 
 # Byte-compiled / optimized / DLL files
