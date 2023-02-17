@@ -49,7 +49,6 @@ class receiverHandler(threading.Thread):
             if self.rfdevice.rx_code_timestamp != self.timestamp:
                 self.timestamp = self.rfdevice.rx_code_timestamp
                 code = self.rfdevice.rx_code
-                print(code)
                 doIgnore = False
 
                 if code not in self.valid_codes:
@@ -57,7 +56,6 @@ class receiverHandler(threading.Thread):
 
                 for i in range(len(self.recent_triggers)):
                     if self.recent_triggers[i][0] == code:
-                        print("RECENTLY TRIGGERED ERRORROR")
                         doIgnore = True
                         break
                 if not doIgnore:
@@ -68,7 +66,6 @@ class receiverHandler(threading.Thread):
 
     def isTriggered(self):
         if len(self.queued_triggers) != 0:
-            print("LOOKING")
             trigger = self.queued_triggers.pop(0)
             self.recent_triggers.append((trigger, time.time()))
             return True, trigger
