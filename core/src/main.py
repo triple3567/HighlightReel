@@ -87,6 +87,7 @@ def main():
 
     # INITIALIZE RF RECIEVER
     input = receiverHandler(config)
+    input.start()
 
     # MAIN LOOP
     print("Listening for codes on reciever")

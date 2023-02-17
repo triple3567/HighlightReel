@@ -14,7 +14,7 @@ class videoUploader(threading.Thread):
         self.mp4File = ""
         self.mp4FileName = ""
         self.httpPostRequestUri = "https://highlight-reel-core.herokuapp.com/api/upload"
-        self.triggeredBy = trigeredBy
+        self.triggeredBy = triggeredBy
 
     def setVideo(self, outfile):
         self.videoPath = outfile

@@ -16,7 +16,7 @@
     },
     "encoderChannels": "RGB888",
     "fileExtension": ".h264",
-    "recieverGPIO": "11",
+    "recieverGPIO": "27",
     "outputStartSleepTime": "5",
     "outputStopSleepTime": "0",
     "wristbandCodesFile": "/home/pi/HighlightReel/core/res/wristband_codes.json"

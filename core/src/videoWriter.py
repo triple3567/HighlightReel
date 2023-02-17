@@ -19,7 +19,7 @@ class videoWriter(threading.Thread):
         return outfile
 
     def uploadVideo(self, outfile):
-        uploader = videoUploader(self.config, self.supress_upload) 
+        uploader = videoUploader(self.config, self.supress_upload, self.triggeredBy) 
         uploader.setVideo(outfile)
         uploader.start()
 
@@ -34,4 +34,4 @@ class videoWriter(threading.Thread):
         self.output.stop()
         time.sleep(self.config.OUTPUT_STOP_SLEEP_TIME)
 
-        self.uploadVideo(outfile, self.trigeredBy)
+        self.uploadVideo(outfile)
