@@ -39,15 +39,19 @@ class receiverHandler(threading.Thread):
             time.sleep(0.01)
             self.expireRecentTriggers()
 
+
+
             if self.rfdevice.rx_code_timestamp != self.timestamp:
                 code = rfdevice.rx_code
                 doIgnore = False
+
+                if code not in self.validCodes:
+                    continue
 
                 for i in len(self.recent_triggers):
                     if self.recent_triggers[i][0] == code
                         doIgnore = True
                         break
-
                 if not doIgnore:
                     self.timestamp = self.rfdevice.rx_code_timestamp
                     self.queued_triggers.append(code)
