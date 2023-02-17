@@ -6,6 +6,7 @@ from picamera2.encoders import H264Encoder
 from picamera2.outputs import CircularOutput
 from picamera2 import Picamera2
 from datetime import datetime
+from libcamera import controls
 from systemd.journal import JournalHandler
 import time, json, logging, sys, argparse, copy
 
@@ -36,7 +37,15 @@ def configurePicam(config):
             "FrameDurationLimits": (
                 config.MIN_FRAME_DURATION_LIMIT, 
                 config.MAX_FRAME_DURATION_LIMIT
-            )
+            ),
+            "AfMode": controls.AfModeEnum.Continuous,
+            "AwbEnable": True,
+            "AwbMode": controls.AwbModeEnum.Indoor,
+            "AeEnable": True,
+            "AeConstraintMode": controls.AeConstraintModeEnum.Normal,
+            "AeExposureMode": controls.AeExposureModeEnum.Normal,
+            "Brightness": 0.0,
+            "AnalogueGain": 10
         }
     )
     picam2.configure(video_config)
@@ -77,16 +86,18 @@ def main():
     time.sleep(config.OUTPUT_RESET_SLEEP_TIME)
 
     # INITIALIZE RF RECIEVER
-    input = receiverHandler(config.RECEIVER_GPIO_PIN)
+    input = receiverHandler(config)
 
     # MAIN LOOP
     print("Listening for codes on reciever")
     sys.stdout.flush()
     while True:
-        if input.isTriggered():
+
+        isInput, triggeredBy = input.isTriggered()
+        if isInput:
             output_copy = copy.copy(output)
             output_copy._circular = output._circular.copy()
-            writer = videoWriter(config, output_copy, args.supress_upload)
+            writer = videoWriter(config, output_copy, args.supress_upload, triggeredBy)
             writer.start()
 
             time.sleep(2) #temporary delay between records until multi transmitter support is implimented.

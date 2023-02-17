@@ -1,8 +1,8 @@
-import json, threading, requests, os
+import json, threading, requests, os, ffmpeg, pprint, time
 from subprocess import call 
 
 class videoUploader(threading.Thread):
-    def __init__(self, config, supress_upload):
+    def __init__(self, config, supress_upload, triggeredBy):
         # calling parent class constructor
         threading.Thread.__init__(self)
 
@@ -14,6 +14,7 @@ class videoUploader(threading.Thread):
         self.mp4File = ""
         self.mp4FileName = ""
         self.httpPostRequestUri = "https://highlight-reel-core.herokuapp.com/api/upload"
+        self.triggeredBy = trigeredBy
 
     def setVideo(self, outfile):
         self.videoPath = outfile
@@ -22,7 +23,7 @@ class videoUploader(threading.Thread):
         self.mp4File = self.config.CONVERTED_FOLDER + self.videoNameNoExtention + ".mp4"
         self.mp4FileName = os.path.basename(self.mp4File)
 
-    def getserial(self):
+    def getHardwareID(self):
         # Extract serial from cpuinfo file
         cpuserial = "0000000000000000"
         try:
@@ -35,6 +36,9 @@ class videoUploader(threading.Thread):
             cpuserial = "ERROR000000000"
     
         return cpuserial
+
+    def getWristbandID(self):
+        return self.triggeredBy
     
     def convertToMP4(self):
         print(self.videoPath)
@@ -50,13 +54,26 @@ class videoUploader(threading.Thread):
     def run(self):
         self.convertToMP4()
 
-        serialNumber = self.getserial()
+        videoProbe = ffmpeg.probe(self.mp4File)
+        videoStream = [stream for stream in videoProbe["streams"] if stream["codec_type"] == "video"][0]
+
         metadata = {
-            "serialNumber": serialNumber
+        "raspberryPiID": self.getHardwareID(),
+        "wristbandID": self.getWristbandID(),
+        "duration": float(videoStream["duration"]),
+        "height": int(videoStream["height"]),
+        "width" : int(videoStream["width"]),
+        "utcTime": time.time(),
         }
+
+        pprint.pprint(metadata)
 
         
         if not self.supress_upload:
+
+            
+
+
             with open(self.mp4File, 'rb') as f:
                 print(f"uploading video[{self.mp4FileName}] to HRCore")
                 r = requests.post(

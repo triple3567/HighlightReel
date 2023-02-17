@@ -18,5 +18,7 @@ while True:
         logging.info(str(rfdevice.rx_code) +
                      " [pulselength " + str(rfdevice.rx_pulselength) +
                      ", protocol " + str(rfdevice.rx_proto) + "]")
+        timestamp = rfdevice.rx_code_timestamp
+        logging.info(rfdevice)
     time.sleep(0.01)
 rfdevice.cleanup()

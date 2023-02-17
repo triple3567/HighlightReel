@@ -19,7 +19,8 @@ class configReader():
         self.SENT_FOLDER = self.CONFIG["sentFolder"]
         self.CONVERTED_FOLDER = self.CONFIG["convertedFolder"]
         self.FILE_EXTENSION = self.CONFIG["fileExtension"]
-        self.OUTPUT_START_SLEEP_TIME = 5
-        self.OUTPUT_STOP_SLEEP_TIME = 2
+        self.OUTPUT_START_SLEEP_TIME = int(self.CONFIG["outputStartSleepTime"])
+        self.OUTPUT_STOP_SLEEP_TIME = int(self.CONFIG["outputStopSleepTime"])
         self.OUTPUT_RESET_SLEEP_TIME = self.VIDEO_LENGTH
         self.RECEIVER_GPIO_PIN = (int(self.CONFIG["recieverGPIO"]))
+        self.WRISTBAND_CONFIG = self.CONFIG["wristbandCodesFile"]

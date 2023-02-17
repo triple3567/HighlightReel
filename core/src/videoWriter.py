@@ -3,13 +3,14 @@ from datetime import datetime
 import time, threading
 
 class videoWriter(threading.Thread):
-    def __init__(self, config, output, supress_upload):
+    def __init__(self, config, output, supress_upload, triggeredBy):
         # calling parent class constructor
         threading.Thread.__init__(self)
 
         self.config = config
         self.output = output
         self.supress_upload = supress_upload
+        self.triggeredBy = triggeredBy
 
     # Get filename
     def getOutfile(self, outfolder, fileExtension):
@@ -33,4 +34,4 @@ class videoWriter(threading.Thread):
         self.output.stop()
         time.sleep(self.config.OUTPUT_STOP_SLEEP_TIME)
 
-        self.uploadVideo(outfile)
+        self.uploadVideo(outfile, self.trigeredBy)
