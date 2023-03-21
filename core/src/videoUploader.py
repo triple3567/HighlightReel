@@ -58,8 +58,8 @@ class videoUploader(threading.Thread):
         videoStream = [stream for stream in videoProbe["streams"] if stream["codec_type"] == "video"][0]
 
         metadata = {
-        "raspberryPiID": self.getHardwareID(),
-        "wristbandID": self.getWristbandID(),
+        "raspberryPiID": str(self.getHardwareID()),
+        "wristbandID": str(self.getWristbandID()),
         "duration": float(videoStream["duration"]),
         "height": int(videoStream["height"]),
         "width" : int(videoStream["width"]),

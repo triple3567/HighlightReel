@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scan WiFi Networks</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 0.5rem;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+
+      button {
+        display: block;
+        margin: 1rem 0;
+        padding: 0.5rem;
+        font-size: 1rem;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #3e8e41;
+      }
+
+      input[type="password"] {
+        display: block;
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 0.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <table id="wifi-table">
+      <thead>
+        <tr>
+          <th>Network Name</th>
+          <th>Connect</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <button id="refresh-btn">Refresh</button>
+    <button id="exit-btn">Exit</button>
+
+    <script>
+      function createRow(networkName) {
+        const row = document.createElement('tr');
+        const networkNameCell = document.createElement('td');
+        networkNameCell.textContent = networkName;
+        const connectBtnCell = document.createElement('td');
+        const connectBtn = document.createElement('button');
+        connectBtn.textContent = 'Connect';
+        connectBtn.addEventListener('click', () => {
+          const passphrase = prompt(`Please enter the passphrase for the network "${networkName}":`);
+          if (passphrase !== null) {
+            const ssid = networkName;
+            const psk = passphrase;
+            const body = JSON.stringify({ ssid, psk });
+            fetch('/configureWifi', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body
+            })
+              .then((response) => response.json())
+              .then((data) => console.log(data))
+              .catch((error) => console.error(error));
+          }
+        });
+        connectBtnCell.appendChild(connectBtn);
+        row.appendChild(networkNameCell);
+        row.appendChild(connectBtnCell);
+        return row;
+      }
+
+      function addRowsToTable(networks) {
+        const tableBody = document.querySelector('#wifi-table tbody');
+        tableBody.innerHTML = '';
+        networks.forEach((network) => {
+          const row = createRow(network);
+          tableBody.appendChild(row);
+        });
+      }
+
+      function getNetworks() {
+        fetch('/wifi-list')
+          .then((response) => response.json())
+          .then((data) => addRowsToTable(data))
+          .catch((error) => console.error(error));
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        getNetworks();
+      });
+
+      const refreshBtn = document.querySelector('#refresh-btn');
+      refreshBtn.addEventListener('click', () => {
+        getNetworks();
+      });
+
+      const exitBtn = document.querySelector('#exit-btn');
+      exitBtn.addEventListener('click', () => {
+        window.location.href = '/settings';
+      });
+    </script>
+  </body>
+</html>

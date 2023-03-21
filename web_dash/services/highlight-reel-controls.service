@@ -1,0 +1,14 @@
+[Unit]
+Description=Highlight Reel core functionality
+After=multi-user.target
+
+[Service]
+Type=simple
+User=highlightreel
+Group=highlightreel
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/local/bin/node /home/pi/HighlightReel/web_dash/index.js
+
+[Install]
+WantedBy=multi-user.target

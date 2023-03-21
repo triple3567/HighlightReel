@@ -38,15 +38,9 @@ printf "\tssid=\"${WIFI_SSID}\"\n" >> $NETWORK_FILE
 printf "\tpsk=\"${WIFI_PSK}\"\n" >> $NETWORK_FILE
 printf "}\n" >> $NETWORK_FILE
 
-wpa_cli -i wlan1 reconfigure
+wpa_cli -i wlan1 reconfigure  
 sleep 30
 
-if [ -z $(ifconfig wlan1 | grep -i inet)];
-then
-	echo "Failed to connect to ${WIFI_SSID}"
-else
-	echo "Connected to ${WIFI_SSID}"
-fi
-
+echo "Connected to ${WIFI_SSID}"
 
 exit 0

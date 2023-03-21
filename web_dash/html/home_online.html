@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Highlight Reel is Online</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      
+      .green-box {
+        background-color: #4caf50;
+        color: #fff;
+        font-size: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 60%;
+        text-align: center;
+      }
+      
+      .button-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 40%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      
+      .button {
+        background-color: #008CBA;
+        color: #fff;
+        font-size: 24px;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        margin: 10px 0;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        width: 80%;
+        max-width: 300px;
+        text-align: center;
+      }
+      
+      .button:hover {
+        background-color: #005B7F;
+      }
+      
+      .top-button-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 600px;
+      }
+      
+      .top-button-container .button {
+        flex-basis: calc(50% - 10px);
+      }
+    </style>
+    <script>
+      async function restart() {
+        const res = await fetch("/start",
+        {
+          method: "GET"
+        })
+        console.log(res)
+        location.href = "/start.html"
+      }
+      
+      async function stop() {
+        const res = await fetch("/stop",
+        {
+          method: "GET"
+        })
+        console.log(res)
+        location.href = "/stop.html"
+      }
+      
+      async function stopAndEnterSettings() {
+        const res = await fetch("/stop",
+        {
+          method: "GET"
+        })
+        console.log(res)
+        location.href = "/stop_and_settings.html"
+      }
+    </script>
+  </head>
+  
+  <body>
+    <div class="green-box">
+      <p>Highlight Reel is Online</p>
+    </div>
+    
+    <div class="button-container">
+      <div class="top-button-container">
+        <button class="button" onclick="restart()">Restart</button>
+        <button class="button" onclick="stop()">Stop</button>
+      </div>
+      <button class="button" onclick="stopAndEnterSettings()">Stop &amp; Enter Settings</button>
+    </div>
+  </body>
+</html>
