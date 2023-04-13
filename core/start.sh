@@ -4,5 +4,5 @@ services=("highlight-reel.service")
 
 for s in ${services[@]}; do
     echo "Starting" $s 
-    systemctl start $s
+    sudo systemctl start $s
 done

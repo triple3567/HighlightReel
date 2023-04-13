@@ -187,6 +187,44 @@ app.get("/wristband_settings", (req, res) => {
     res.sendFile("/home/pi/HighlightReel/web_dash/html/wristband_settings.html")
 })
 
+app.get("/poolID_settings", (req, res) => {
+    res.sendFile("/home/pi/HighlightReel/web_dash/html/poolID_settings.html")
+})
+
+app.get("/poolID", (req, res) => {
+    const fs = require('fs');
+
+    fs.readFile("/home/pi/HighlightReel/core/res/config.json", 'utf8', (err, data) => {
+        if (err) throw err;
+        const config = JSON.parse(data)
+        const poolId = config["poolID"]
+
+        if(poolId == null){
+            res.send("No Pool ID Set!")
+        }
+        else{
+            res.send(poolId)
+        }
+    })
+})
+
+app.post("/poolID", (req, res) => {
+    const fs = require('fs');
+
+    var name = "/home/pi/HighlightReel/core/res/config.json"
+    
+    fs.readFile(name, 'utf8', (err, data) => {
+        if (err) throw err;
+        var config = JSON.parse(data)
+
+        config['poolID'] = req.body.poolID
+
+        var modifiedConfig = JSON.stringify(config, null, "\t")
+        fs.writeFileSync(name, modifiedConfig)
+        res.send()
+    })
+})
+
 app.listen(PORT, hostname, () => {
     console.log("Application started and Listening on " + hostname +":" + PORT);
   });

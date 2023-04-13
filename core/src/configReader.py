@@ -18,9 +18,12 @@ class configReader():
         self.QUEUE_FOLDER = self.CONFIG["queueFolder"]
         self.SENT_FOLDER = self.CONFIG["sentFolder"]
         self.CONVERTED_FOLDER = self.CONFIG["convertedFolder"]
+        self.WATERMARKED_FOLDER = self.CONFIG["watermarkedFolder"]
         self.FILE_EXTENSION = self.CONFIG["fileExtension"]
         self.OUTPUT_START_SLEEP_TIME = int(self.CONFIG["outputStartSleepTime"])
         self.OUTPUT_STOP_SLEEP_TIME = int(self.CONFIG["outputStopSleepTime"])
         self.OUTPUT_RESET_SLEEP_TIME = self.VIDEO_LENGTH
         self.RECEIVER_GPIO_PIN = (int(self.CONFIG["recieverGPIO"]))
         self.WRISTBAND_CONFIG = self.CONFIG["wristbandCodesFile"]
+        self.POOL_ID = self.CONFIG["poolID"]
+        self.WATERMARK = self.CONFIG["watermarkFile"]

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Pool ID</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      /* Style the body to take up the entire screen */
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      /* Style the form elements */
+      form {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      input[type=number]::-webkit-inner-spin-button,
+      input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      
+      input[type=number] {
+        -moz-appearance: textfield;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <label for="poolID">Pool ID</label>
+      <input type="text" id="poolID" name="poolID" readonly>
+    </div>
+    <br>
+    <div>
+      <form>
+        <label for="newPoolID">New Pool ID</label>
+        <input type="number" id="newPoolID" name="newPoolID" min="0">
+        <input type="submit" value="Submit" onclick="submitNewPoolID()">
+      </form>
+    </div>
+    <br>
+    <div>
+      <button onclick="redirectToSettings()">Exit</button>
+    </div>
+    
+    <script>
+      // Function to handle the GET request to retrieve the current pool ID
+      function getCurrentPoolID() {
+        fetch('/poolID')
+          .then(response => response.text())
+          .then(poolID => {
+            document.getElementById('poolID').value = poolID;
+          })
+          .catch(error => console.error(error));
+      }
+      
+      // Function to handle the POST request to update the pool ID
+      function submitNewPoolID() {
+        event.preventDefault();
+        const newPoolID = document.getElementById('newPoolID').value;
+        const data = {poolID: newPoolID};
+        fetch('/poolID', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+          .then(response => {
+            getCurrentPoolID();
+            document.getElementById('newPoolID').value = '';
+          })
+          .catch(error => console.error(error));
+      }
+      
+      // Function to redirect to the settings page
+      function redirectToSettings() {
+        window.location.href = '/settings';
+      }
+      
+      // Call the function to retrieve the current pool ID when the page loads
+      getCurrentPoolID();
+    </script>
+    
+  </body>
+</html>

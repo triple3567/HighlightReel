@@ -1,12 +1,14 @@
 from receiverHandler import receiverHandler
 from videoUploader import videoUploader
 from videoWriter import videoWriter
+from outputQueueHandler import outputQueueHandler
 from configReader import configReader
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import CircularOutput
 from picamera2 import Picamera2
 from datetime import datetime
-from libcamera import controls
+from libcamera import controls, Transform
+from libcamera import Transform
 from systemd.journal import JournalHandler
 import time, json, logging, sys, argparse, copy
 
@@ -27,7 +29,7 @@ def configurePicam(config):
         main={
             "size": config.MAX_DIMENSIONS, 
             "format": config.ENCODER_CHANNELS
-        }, 
+        },
         lores={
             "size": config.MIN_DIMENSIONS, 
             "format": "YUV420"
@@ -48,6 +50,7 @@ def configurePicam(config):
             "AnalogueGain": 10
         }
     )
+    video_config["transform"] = Transform(vflip=1)
     picam2.configure(video_config)
     encoder = H264Encoder(bitrate=config.VIDEO_BITRATE)
     output = CircularOutput(
@@ -74,7 +77,7 @@ def main():
     args = parseArgs()
 
     # READ CONFIG FILE AND INITIALIZE VARIABLES
-    config = configReader("/home/pi/HighlightReel/core/config.json")
+    config = configReader("/home/pi/HighlightReel/core/res/config.json")
     config.readConfig()
 
     outfile = None
@@ -84,6 +87,10 @@ def main():
     # INITIALIZE CAMERA ENDCODER AND OUTPUT OBJECTS
     picam2, output = configurePicam(config)
     time.sleep(config.OUTPUT_RESET_SLEEP_TIME)
+
+    # INITIALIZE OUTPUT QUEUE
+    outputHandler = outputQueueHandler(config, args.supress_upload)
+    outputHandler.start()
 
     # INITIALIZE RF RECIEVER
     input = receiverHandler(config)
@@ -98,10 +105,8 @@ def main():
         if isInput:
             output_copy = copy.copy(output)
             output_copy._circular = output._circular.copy()
-            writer = videoWriter(config, output_copy, args.supress_upload, triggeredBy)
-            writer.start()
+            outputHandler.push(output_copy, triggeredBy)
 
-            time.sleep(2) #temporary delay between records until multi transmitter support is implimented.
         time.sleep(0.01)
 
 if __name__ == '__main__':
