@@ -1,7 +1,6 @@
-videos/*
-images/s*
-frames/*
-archive/*
+core/out/*
+core/out/*/*
+web_dash/res/capture.jpg
 
 
 # Byte-compiled / optimized / DLL files

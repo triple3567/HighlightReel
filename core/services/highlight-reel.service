@@ -1,0 +1,14 @@
+[Unit]
+Description=Highlight Reel core functionality
+After=multi-user.target
+
+[Service]
+Type=simple
+User=highlightreel
+Group=highlightreel
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/bin/python3 /home/pi/HighlightReel/core/src/main.py
+
+[Install]
+WantedBy=multi-user.target

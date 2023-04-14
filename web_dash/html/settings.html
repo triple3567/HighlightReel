@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding-bottom: 10%;
+      }
+      
+      .title {
+        background-color: #f44336;
+        color: #fff;
+        font-size: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 10%;
+      }
+      
+      .button-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: 60%;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      
+      .button {
+        background-color: #008CBA;
+        color: #fff;
+        font-size: 24px;
+        padding: 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        width: 100%;
+        margin-bottom: 10px;
+        flex-grow: 1;
+      }
+      
+      .button:last-child {
+        margin-bottom: 0;
+      }
+      
+      .button:hover {
+        background-color: #005B7F;
+      }
+
+      /* Media queries for smaller screens */
+      @media only screen and (max-width: 600px) {
+        .title {
+          font-size: 20px;
+        }
+
+        .button {
+          font-size: 18px;
+          padding: 15px;
+        }
+
+        .button-container {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="title">
+      <p>Settings</p>
+    </div>
+    
+    <div class="button-container">
+      <button class="button" onclick="viewCamera()">View Camera</button>
+      <button class="button" onclick="configureWiFi()">Configure WiFi</button>
+      <button class="button" onclick="registerWristband()">Register Wristband</button>
+      <button class="button" onclick="poolIDSettings()">Pool ID</button>
+      <button class="button" onclick="exit()">Exit</button>
+    </div>
+    
+    <script>
+      function viewCamera() {
+        location.href = "/camera"
+      }
+      
+      function configureWiFi() {
+        location.href = "/wifi-settings"
+      }
+      
+      function registerWristband() {
+        location.href = "/wristband_settings"
+      }
+      
+      function exit() {
+        location.href = "/"
+      }
+      
+      function poolIDSettings() {
+        location.href = "/poolID_settings"
+      }
+    </script>
+  </body>
+</html>

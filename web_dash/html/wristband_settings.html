@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Wristband Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+      table {
+        margin: 0 auto;
+        width: 90%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: center;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      #btn-container {
+        margin-top: 10px;
+        text-align: center;
+      }
+      @media only screen and (max-width: 600px) {
+        table {
+          width: 100%;
+        }
+        #btn-container {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Wristband Settings</h1>
+    <table>
+      <tr>
+        <th>Registered Wristbands</th>
+        <th>Remove?</th>
+      </tr>
+    </table>
+    <div id="btn-container">
+      <button id="register-btn" onclick="registerWristband()">Register new wristband</button>
+      <button id="exit-btn" onclick="exitPage()">Exit</button>
+    </div>
+    <script type="text/javascript">
+      // On page load, send a GET request to "/wristbands"
+      window.onload = () => {
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = () => {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            // Expect an array of Strings to be returned
+            let response = JSON.parse(xhttp.responseText);
+            // Populate the table with a row for each String in the array returned
+            for (let i = 0; i < response.length; i++) {
+              let string = response[i];
+              let table = document.querySelector("table");
+              let row = table.insertRow(-1);
+              let cell1 = row.insertCell(0);
+              let cell2 = row.insertCell(1);
+              cell1.innerHTML = string;
+              cell2.innerHTML = `<button onclick="removeWristband('${string}')">Remove</button>`;
+            }
+          }
+        };
+        xhttp.open("GET", "/wristbands", true);
+        xhttp.send();
+      };
+      // When a row's "Remove" button is pressed, send a POST request to "/delete_wristband"
+      function removeWristband(wristband) {
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = () => {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            // Wait for a response from the POST request, then reload all of the table's elements by sending a GET request to "/wristbands"
+            let xhttp2 = new XMLHttpRequest();
+            xhttp2.onreadystatechange = () => {
+              if (xhttp2.readyState == 4 && xhttp2.status == 200) {
+                let response = JSON.parse(xhttp2.responseText);
+                // Clear the table
+                let table = document.querySelector("table");
+                let rowCount = table.rows.length;
+                for (let i = rowCount - 1; i > 0; i--) {
+                  table.deleteRow(i);
+                }
+                // Populate the table with a row for each String in the array returned
+                for (let i = 0; i < response.length; i++) {
+                  let string = response[i];
+                  let row = table.insertRow(-1);
+                  let cell1 = row.insertCell(0);
+                  let cell2 = row.insertCell(1);
+                  cell1.innerHTML = string;
+                  cell2.innerHTML = `<button onclick="removeWristband('${string}')">Remove</button>`;
+                }
+              }
+            };
+            xhttp2.open("GET", "/wristbands", true);
+            xhttp2.send();
+          }
+        };
+        xhttp.open("POST", "/delete_wristband", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send(`wristband=${wristband}`);
+      }
+      // When the "Register new wristband" button is pressed, send a POST request to "/register_wristband"
+      function registerWristband() {
+        let xhttp = new XMLHttpRequest();
+        // Change the button to say "Listening for new wristbands" and make the button unclickable
+        let btn = document.querySelector("#register-btn");
+        btn.innerHTML = "Listening for new wristbands";
+        btn.disabled = true;
+        xhttp.onreadystatechange = () => {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            
+            // When the response from the post request is returned, return the button to its original state
+            btn.innerHTML = "Register new wristband";
+            btn.disabled = false;
+            // Reload all of the table's elements by sending a GET request to "/wristbands"
+            let xhttp2 = new XMLHttpRequest();
+            xhttp2.onreadystatechange = () => {
+              if (xhttp2.readyState == 4 && xhttp2.status == 200) {
+                let response = JSON.parse(xhttp2.responseText);
+                // Clear the table
+                let table = document.querySelector("table");
+                let rowCount = table.rows.length;
+                for (let i = rowCount - 1; i > 0; i--) {
+                  table.deleteRow(i);
+                }
+                // Populate the table with a row for each String in the array returned
+                for (let i = 0; i < response.length; i++) {
+                  let string = response[i];
+                  let row = table.insertRow(-1);
+                  let cell1 = row.insertCell(0);
+                  let cell2 = row.insertCell(1);
+                  cell1.innerHTML = string;
+                  cell2.innerHTML = `<button onclick="removeWristband('${string}')">Remove</button>`;
+                }
+              }
+            };
+            xhttp2.open("GET", "/wristbands", true);
+            xhttp2.send();
+          }
+        };
+        xhttp.open("POST", "/register_wristband", true);
+        xhttp.send();
+      }
+      // When the "Exit" button is pressed, navigate the page to "/settings"
+      function exitPage() {
+        window.location.href = "/settings";
+      }
+    </script>
+  </body>
+</html>

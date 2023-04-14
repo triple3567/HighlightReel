@@ -1,0 +1,12 @@
+Name=Broadstone3020
+SSID=42726f616473746f6e6533303230
+Frequency=2437
+Favorite=true
+AutoConnect=true
+Modified=2022-12-05T04:29:48.772378Z
+Passphrase=122395189
+IPv4.method=dhcp
+IPv6.method=auto
+IPv6.privacy=disabled
+IPv4.DHCP.LastAddress=10.0.0.43
+IPv6.DHCP.DUID=000100012afae45d1cbfce109733

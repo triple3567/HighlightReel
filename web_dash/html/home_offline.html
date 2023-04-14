@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Highlight Reel is Offline</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding-bottom: 10%;
+      }
+      
+      .red-box {
+        background-color: #f44336;
+        color: #fff;
+        font-size: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 60%;
+      }
+      
+      .button-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: 40%;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      
+      .button {
+        background-color: #008CBA;
+        color: #fff;
+        font-size: 24px;
+        padding: 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      
+      .button:last-child {
+        margin-bottom: 0;
+      }
+      
+      .button:hover {
+        background-color: #005B7F;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="red-box">
+      <p>Highlight Reel is Offline</p>
+    </div>
+    
+    <div class="button-container">
+      <button class="button" onclick="startClicked()">Start</button>
+      <button class="button" onclick="settingsClicked()">Settings</button>
+    </div>
+
+    <script>
+      async function startClicked() {
+        const res = await fetch("/start",
+        {
+          method: "GET"
+        })
+        console.log(res)
+        location.href = "/start.html"
+      }
+      
+      function settingsClicked() {
+        location.href = "/settings"
+      }
+    </script>
+  </body>
+</html>
