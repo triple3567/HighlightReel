@@ -36,7 +36,6 @@ class videoWriter(threading.Thread):
         print(self.videoName)
         print(self.videoNameNoExtention)
         self.mp4File = self.config.CONVERTED_FOLDER + self.videoNameNoExtention + ".mp4"
-        #command = f"MP4Box -add {self.videoPath} {self.mp4File}"
         command = [
             "MP4Box",
             "-add",
