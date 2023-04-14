@@ -1,3 +1,4 @@
 #!/bin/bash
-git checkout -f latest
-git pull
+cd /home/pi/HighlightReel && \
+git checkout -f latest && \
+git pull -f
