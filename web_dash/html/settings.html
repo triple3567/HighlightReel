@@ -85,6 +85,8 @@
       <button class="button" onclick="configureWiFi()">Configure WiFi</button>
       <button class="button" onclick="registerWristband()">Register Wristband</button>
       <button class="button" onclick="poolIDSettings()">Pool ID</button>
+      <button class="button" onclick="restartSystem()">Restart Camera</button>
+      <button class="button" onclick="updateAndRestart()">Update and Restart</button>
       <button class="button" onclick="exit()">Exit</button>
     </div>
     
@@ -107,6 +109,14 @@
       
       function poolIDSettings() {
         location.href = "/poolID_settings"
+      }
+
+      function restartSystem(){
+        location.href = "/reboot"
+      }
+
+      function updateAndRestart(){
+        location.href = "/update_and_reboot"
       }
     </script>
   </body>
