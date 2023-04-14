@@ -95,6 +95,32 @@ app.get("/stop", (req, res) => {
     res.send()
 });
 
+app.get("/reboot", (req, res) => {
+    var exec = require('child_process').exec;
+    var execSync = require('child_process').execSync;
+
+    execSync("/home/pi/HighlightReel/web_dash/scripts/checkout_latest.sh")
+
+    exec("/home/pi/HighlightReel/web_dash/scripts/reboot.sh", 
+    function(err, stdout, stderr) {
+        console.log(stdout)
+        console.log(stderr)
+    })
+    res.sendFile("/home/pi/HighlightReel/web_dash/html/restart.html")
+})
+
+app.get("/update_and_reboot", (req, res) => {
+    var exec = require('child_process').exec;
+
+    exec("/home/pi/HighlightReel/web_dash/scripts/reboot.sh", 
+    function(err, stdout, stderr) {
+        console.log(stdout)
+        console.log(stderr)
+    })
+    res.sendFile("/home/pi/HighlightReel/web_dash/html/restart.html")
+})
+
+
 app.get("/wifi-list", (req, res) => {
     var execSync = require('child_process').execSync;
 
@@ -224,6 +250,7 @@ app.post("/poolID", (req, res) => {
         res.send()
     })
 })
+
 
 app.listen(PORT, hostname, () => {
     console.log("Application started and Listening on " + hostname +":" + PORT);
