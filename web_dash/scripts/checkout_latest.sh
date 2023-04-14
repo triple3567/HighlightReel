@@ -1,3 +1,3 @@
 #!/bin/bash
-git checkout -f latest
-git pull
+git --git-dir=/home/pi/HighlightReel checkout -f latest
+git --git-dir=/home/pi/HighlightReel pull
