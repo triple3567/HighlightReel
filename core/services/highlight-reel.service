@@ -1,7 +1,7 @@
 [Unit]
 Description=Highlight Reel core functionality
 After=multi-user.target
-
+ 
 [Service]
 Type=simple
 User=highlightreel
