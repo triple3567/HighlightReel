@@ -110,7 +110,7 @@ app.get("/update_and_reboot", (req, res) => {
     var exec = require('child_process').exec;
     var execSync = require('child_process').execSync;
     
-    execSync("/home/pi/HighlightReel/web_dash/scripts/checkout_latest.sh")
+    execSync("/home/pi/HighlightReel/web_dash/scripts/checkout_main.sh")
 
     exec("/home/pi/HighlightReel/web_dash/scripts/reboot.sh", 
     function(err, stdout, stderr) {
