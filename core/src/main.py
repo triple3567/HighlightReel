@@ -50,7 +50,7 @@ def configurePicam(config):
             "AnalogueGain": 10
         }
     )
-    video_config["transform"] = Transform(vflip=1)
+    video_config["transform"] = Transform(vflip=1, hflip=1)
     picam2.configure(video_config)
     encoder = H264Encoder(bitrate=config.VIDEO_BITRATE)
     output = CircularOutput(

@@ -27,3 +27,4 @@ class configReader():
         self.WRISTBAND_CONFIG = self.CONFIG["wristbandCodesFile"]
         self.POOL_ID = self.CONFIG["poolID"]
         self.WATERMARK = self.CONFIG["watermarkFile"]
+        self.THUMBNAILS_FOLDER = self.CONFIG["thumbnailsFolder"]

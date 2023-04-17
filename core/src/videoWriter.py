@@ -19,8 +19,8 @@ class videoWriter(threading.Thread):
         outfile = outfolder + filename + fileExtension
         return outfile
 
-    def uploadVideo(self, outfile):
-        uploader = videoUploader(outfile, self.config, self.supress_upload, self.triggeredBy) 
+    def uploadVideo(self, outfile, thumbnail):
+        uploader = videoUploader(outfile, thumbnail, self.config, self.supress_upload, self.triggeredBy) 
         uploader.start()
         uploader.join()
 
@@ -68,6 +68,21 @@ class videoWriter(threading.Thread):
 
         os.remove(self.mp4File)
 
+    def generateThumbnail(self):
+        self.thumbnailFile = self.config.THUMBNAILS_FOLDER + self.videoNameNoExtention + ".jpg"
+        command = [
+            "/usr/bin/ffmpeg",
+            "-i",
+            f"{self.watermarkedFile}",
+            "-ss",
+            "00:00:00.000",
+            "-vframes",
+            "1",
+            f"{self.thumbnailFile}"
+        ]
+        subprocess.run(command)
+
+
     def run(self):
         print("Starting output")
         outfile = self.getOutfile(self.config.QUEUE_FOLDER, self.config.FILE_EXTENSION)
@@ -88,4 +103,7 @@ class videoWriter(threading.Thread):
         # add watermark
         self.addWatermark()
 
-        self.uploadVideo(self.watermarkedFile)
+        # generate thumbnail
+    self.generateThumbnail()
+
+        self.uploadVideo(self.watermarkedFile, self.thumbnailFile)
