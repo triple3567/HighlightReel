@@ -4,7 +4,7 @@
 	"convertedFolder": "/home/pi/HighlightReel/core/out/converted/",
 	"bitrate": "10000000",
 	"framesPerSecond": "30.0",
-	"videoLengthSeconds": "10.0",
+	"videoLengthSeconds": "15.0",
 	"maxVideosStored": "1",
 	"maxDimensions": {
 		"width": "1920",

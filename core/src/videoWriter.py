@@ -19,8 +19,8 @@ class videoWriter(threading.Thread):
         outfile = outfolder + filename + fileExtension
         return outfile
 
-    def uploadVideo(self, outfile, thumbnail):
-        uploader = videoUploader(outfile, thumbnail, self.config, self.supress_upload, self.triggeredBy) 
+    def uploadVideo(self, outfile):
+        uploader = videoUploader(outfile, self.config, self.supress_upload, self.triggeredBy) 
         uploader.start()
         uploader.join()
 
@@ -100,10 +100,4 @@ class videoWriter(threading.Thread):
         # convert to mp4
         self.convertToMP4()
 
-        # add watermark
-        self.addWatermark()
-
-        # generate thumbnail
-    self.generateThumbnail()
-
-        self.uploadVideo(self.watermarkedFile, self.thumbnailFile)
+        self.uploadVideo(self.mp4File)

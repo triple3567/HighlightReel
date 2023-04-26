@@ -2,15 +2,14 @@ import json, threading, requests, os, ffmpeg, pprint, time
 from subprocess import call 
 
 class videoUploader(threading.Thread):
-    def __init__(self, outfile, thumbnail, config, supress_upload, triggeredBy):
+    def __init__(self, outfile, config, supress_upload, triggeredBy):
         # calling parent class constructor
         threading.Thread.__init__(self)
 
         self.config = config
         self.supress_upload = supress_upload
         self.outfile = outfile
-        self.thumbnail = thumbnail
-        self.httpPostRequestUri = "https://highlight-reel-core.herokuapp.com/api/upload"
+        self.httpPostRequestUri = "52.20.31.145:5000/api/upload"
         self.triggeredBy = triggeredBy
 
     def getHardwareID(self):
@@ -49,23 +48,21 @@ class videoUploader(threading.Thread):
         pprint.pprint(metadata)
 
         basename = os.path.basename(self.outfile)
-        thumbnailBase = os.path.basename(self.thumbnail)
         if not self.supress_upload:
             with open(self.outfile, 'rb') as f:
-                with open(self.thumbnail, 'rb' as t):
-                    print(f"uploading video[{basename}] to HRCore")
-                    r = requests.post(
-                        self.httpPostRequestUri, 
-                        files={basename: f, thumbnailBase: t}, 
-                        data=metadata
-                    )
+                print(f"uploading video[{basename}] to HRCore")
+                r = requests.post(
+                    self.httpPostRequestUri, 
+                    files={basename: f}, 
+                    data=metadata
+                )
 
-                    response = r.json()
+                response = r.json()
 
-                    if response["status"] == "error":
-                        print(f"error uploading video[{basename}]")
-                        message = response["message"]
-                        print(f"message: {message}")
-                    else:
-                        print(f"success uploading video[{basename}]")
-                        os.rename(self.outfile, self.config.SENT_FOLDER + basename)
+                if response["status"] == "error":
+                    print(f"error uploading video[{basename}]")
+                    message = response["message"]
+                    print(f"message: {message}")
+                else:
+                    print(f"success uploading video[{basename}]")
+                    os.rename(self.outfile, self.config.SENT_FOLDER + basename)
