@@ -77,7 +77,7 @@ def main():
     args = parseArgs()
 
     # READ CONFIG FILE AND INITIALIZE VARIABLES
-    config = configReader("/home/pi/HighlightReel/core/res/config.json")
+    config = configReader()
     config.readConfig()
 
     outfile = None

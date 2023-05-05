@@ -9,7 +9,7 @@ class videoUploader(threading.Thread):
         self.config = config
         self.supress_upload = supress_upload
         self.outfile = outfile
-        self.httpPostRequestUri = "52.20.31.145:5000/api/upload"
+        self.httpPostRequestUri = "http://52.20.31.145:5000/api/upload"
         self.triggeredBy = triggeredBy
 
     def getHardwareID(self):

@@ -20,7 +20,7 @@
 	"outputStartSleepTime": "5",
 	"outputStopSleepTime": "0",
 	"wristbandCodesFile": "/home/pi/HighlightReel/core/res/wristband_codes.json",
-	"poolID": "clbsxednw00n0txqmyceeuosp",
+	"poolID": "",
 	"watermarkedFolder": "/home/pi/HighlightReel/core/out/watermarked/",
 	"watermarkFile": "/home/pi/HighlightReel/core/res/watermark.png",
 	"thumbnailsFolder": "/home/pi/HighlightReel/core/out/thumbnails/"

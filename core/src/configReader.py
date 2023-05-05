@@ -1,8 +1,17 @@
-import json
+import json, os
+import shutil
 
 class configReader():
-    def __init__(self, file):
-        self.filename = file
+    def __init__(self):
+        self.filename = "/home/pi/HighlightReel/core/res/config-custom.json"
+        if not self.hasCustomConfig():
+            self.createCustomConfig()
+
+    def createCustomConfig(self):
+        shutil.copyfile("/home/pi/HighlightReel/core/res/config.json", "/home/pi/HighlightReel/core/res/config-custom.json")
+
+    def hasCustomConfig(self):
+        return os.path.isfile("/home/pi/HighlightReel/core/res/config-custom.json")
 
     def readConfig(self):
         self.CONFIG_FILE = open(self.filename)
