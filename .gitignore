@@ -1,7 +1,7 @@
 core/out/*
 core/out/*/*
 web_dash/res/capture.jpg
-
+core/res/config-custom.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -4,7 +4,7 @@
 	"convertedFolder": "/home/pi/HighlightReel/core/out/converted/",
 	"bitrate": "10000000",
 	"framesPerSecond": "30.0",
-	"videoLengthSeconds": "10.0",
+	"videoLengthSeconds": "15.0",
 	"maxVideosStored": "1",
 	"maxDimensions": {
 		"width": "1920",
@@ -20,7 +20,8 @@
 	"outputStartSleepTime": "5",
 	"outputStopSleepTime": "0",
 	"wristbandCodesFile": "/home/pi/HighlightReel/core/res/wristband_codes.json",
-	"poolID": "clbsxednw00n0txqmyceeuosp",
+	"poolID": "",
 	"watermarkedFolder": "/home/pi/HighlightReel/core/out/watermarked/",
-	"watermarkFile": "/home/pi/HighlightReel/core/res/watermark.png"
+	"watermarkFile": "/home/pi/HighlightReel/core/res/watermark.png",
+	"thumbnailsFolder": "/home/pi/HighlightReel/core/out/thumbnails/"
 }

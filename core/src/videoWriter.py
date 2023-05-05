@@ -68,6 +68,21 @@ class videoWriter(threading.Thread):
 
         os.remove(self.mp4File)
 
+    def generateThumbnail(self):
+        self.thumbnailFile = self.config.THUMBNAILS_FOLDER + self.videoNameNoExtention + ".jpg"
+        command = [
+            "/usr/bin/ffmpeg",
+            "-i",
+            f"{self.watermarkedFile}",
+            "-ss",
+            "00:00:00.000",
+            "-vframes",
+            "1",
+            f"{self.thumbnailFile}"
+        ]
+        subprocess.run(command)
+
+
     def run(self):
         print("Starting output")
         outfile = self.getOutfile(self.config.QUEUE_FOLDER, self.config.FILE_EXTENSION)
@@ -85,7 +100,4 @@ class videoWriter(threading.Thread):
         # convert to mp4
         self.convertToMP4()
 
-        # add watermark
-        self.addWatermark()
-
-        self.uploadVideo(self.watermarkedFile)
+        self.uploadVideo(self.mp4File)
