@@ -8,7 +8,7 @@ class configReader():
 
     def createCustomConfig(self):
         shutil.copyfile("/home/pi/HighlightReel/core/res/config.json", "/home/pi/HighlightReel/core/res/config-custom.json")
-        os.chmod("/home/pi/HighlightReel/core/res/config-custom.json", stat.S_IRWXG)
+        os.chmod("/home/pi/HighlightReel/core/res/config-custom.json", stat.S_IRWXG | stat.S_IRWXU | stat.S_IRWXO)
 
     def hasCustomConfig(self):
         return os.path.isfile("/home/pi/HighlightReel/core/res/config-custom.json")

@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 from rpi_rf import RFDevice
-import threading, json, time, shutil, os
+import threading, json, time, shutil, os, stat
 
 
 class receiverHandler(threading.Thread):
@@ -28,7 +28,7 @@ class receiverHandler(threading.Thread):
 
     def createCustomWristbandFile(self):
         shutil.copyfile("/home/pi/HighlightReel/core/res/wristband_codes.json","/home/pi/HighlightReel/core/res/wristband_codes_custom.json")
-        os.chmod("/home/pi/HighlightReel/core/res/wristband_codes_custom.json", stat.S_IRWXG)
+        os.chmod("/home/pi/HighlightReel/core/res/wristband_codes_custom.json", stat.S_IRWXG | stat.S_IRWXU | stat.S_IRWXO)
         return
 
     def hasCustomWristbandFile(self):
