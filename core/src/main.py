@@ -46,8 +46,8 @@ def configurePicam(config):
             "AeEnable": True,
             "AeConstraintMode": controls.AeConstraintModeEnum.Normal,
             "AeExposureMode": controls.AeExposureModeEnum.Normal,
-            "Brightness": 0.0,
-            "AnalogueGain": 10
+            "Brightness": config.BRIGHTNESS,
+            "AnalogueGain": config.ANALOGUE_GAIN
         }
     )
     video_config["transform"] = Transform(vflip=1, hflip=1)

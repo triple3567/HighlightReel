@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 from rpi_rf import RFDevice
-import threading, json, time
+import threading, json, time, shutil, os
 
 
 class receiverHandler(threading.Thread):
@@ -11,7 +11,7 @@ class receiverHandler(threading.Thread):
         self.config = config
         self.RECEIVER_DATA_PIN = config.RECEIVER_GPIO_PIN
         self.rfdevice = RFDevice(self.RECEIVER_DATA_PIN)
-        self.file = self.config.WRISTBAND_CONFIG
+        self.file = self.getFile()
         self.valid_codes = self.readWristbandCodes(self.file)
         self.timestamp = None
         self.recent_triggers = []
@@ -19,7 +19,23 @@ class receiverHandler(threading.Thread):
         self.TRIGGER_DELAY_TIME = 5
 
         self.rfdevice.enable_rx()
+
+    def getFile(self):
+        if not self.hasCustomWristbandFile():
+            self.createCustomWristbandFile()
+
+        return "/home/pi/HighlightReel/core/res/wristband_codes_custom.json"
+
+    def createCustomWristbandFile(self):
+        shutil.copyfile("/home/pi/HighlightReel/core/res/wristband_codes.json","/home/pi/HighlightReel/core/res/wristband_codes_custom.json")
+        os.chmod("/home/pi/HighlightReel/core/res/wristband_codes_custom.json", stat.S_IRWXG)
+        return
+
+    def hasCustomWristbandFile(self):
+        return os.path.isfile("/home/pi/HighlightReel/core/res/wristband_codes_custom.json")
+
     def readWristbandCodes(self, file):
+
         valid_codes = []
         f = open(file)
         wristbandCodes = json.load(f)

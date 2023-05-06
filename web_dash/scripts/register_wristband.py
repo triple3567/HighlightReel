@@ -10,7 +10,7 @@ def readWristbandCodes(file):
         valid_codes.append(i)
     return valid_codes
 
-wristband_file = "/home/pi/HighlightReel/core/res/wristband_codes.json"
+wristband_file = "/home/pi/HighlightReel/core/res/wristband_codes_custom.json"
 current_wristbands = readWristbandCodes(wristband_file)
 
 rfdevice = None

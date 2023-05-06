@@ -202,7 +202,7 @@ app.post("/delete_wristband", (req, res) => {
 app.get("/wristbands", (req, res) =>{
     const fs = require('fs');
 
-    fs.readFile('/home/pi/HighlightReel/core/res/wristband_codes.json', 'utf8', (err, data) => {
+    fs.readFile('/home/pi/HighlightReel/core/res/wristband_codes_custom.json', 'utf8', (err, data) => {
         if (err) throw err;
         const wristbandCodes = JSON.parse(data);
         res.send(wristbandCodes)
@@ -220,7 +220,7 @@ app.get("/poolID_settings", (req, res) => {
 app.get("/poolID", (req, res) => {
     const fs = require('fs');
 
-    fs.readFile("/home/pi/HighlightReel/core/res/config.json", 'utf8', (err, data) => {
+    fs.readFile("/home/pi/HighlightReel/core/res/config-custom.json", 'utf8', (err, data) => {
         if (err) throw err;
         const config = JSON.parse(data)
         const poolId = config["poolID"]

@@ -1,5 +1,4 @@
-import json, os
-import shutil
+import json, os, stat, shutil
 
 class configReader():
     def __init__(self):
@@ -9,6 +8,7 @@ class configReader():
 
     def createCustomConfig(self):
         shutil.copyfile("/home/pi/HighlightReel/core/res/config.json", "/home/pi/HighlightReel/core/res/config-custom.json")
+        os.chmod("/home/pi/HighlightReel/core/res/config-custom.json", stat.S_IRWXG)
 
     def hasCustomConfig(self):
         return os.path.isfile("/home/pi/HighlightReel/core/res/config-custom.json")
@@ -37,3 +37,5 @@ class configReader():
         self.POOL_ID = self.CONFIG["poolID"]
         self.WATERMARK = self.CONFIG["watermarkFile"]
         self.THUMBNAILS_FOLDER = self.CONFIG["thumbnailsFolder"]
+        self.BRIGHTNESS = float(self.CONFIG["brightness"])
+        self.ANALOGUE_GAIN = int(self.CONFIG["analogueGain"])
