@@ -1,0 +1,14 @@
+[Unit]
+Description=Highlight Reel wifi naming
+After=multi-user.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+Restart=on-failure
+RestartSec=5s
+ExecStart=/bin/bash /home/pi/HighlightReel/web_dash/services/generate_wifi_config.sh
+
+[Install]
+WantedBy=multi-user.target
