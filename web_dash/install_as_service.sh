@@ -6,7 +6,7 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
 fi
 
 DIR="/home/pi/HighlightReel/web_dash/services"
-services=("highlight-reel-controls.service")
+services=("highlight-reel-controls.service" "highlight-reel-wifi-config.service")
 
 for s in ${services[@]}; do
     FILE="$DIR/$s"
@@ -14,7 +14,7 @@ for s in ${services[@]}; do
     echo "Copying" $FILE "to /etc/systemd/system"
     sudo cp $FILE /etc/systemd/system
     echo "Enableing" $FILE "to start on boot"
-    sudo systemctl enable highlight-reel-controls
+    sudo systemctl enable $s
 
 done
 

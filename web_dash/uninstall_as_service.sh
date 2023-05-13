@@ -6,7 +6,7 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
 fi
 
 DIR="/home/pi/HighlightReel/web_dash/services"
-services=("highlight-reel-controls.service")
+services=("highlight-reel-controls.service" "highlight-reel-wifi-config.service")
 
 for s in ${services[@]}; do
     echo "Stopping" $s 

@@ -202,7 +202,7 @@ app.post("/delete_wristband", (req, res) => {
 app.get("/wristbands", (req, res) =>{
     const fs = require('fs');
 
-    fs.readFile('/home/pi/HighlightReel/core/res/wristband_codes.json', 'utf8', (err, data) => {
+    fs.readFile('/home/pi/HighlightReel/core/res/wristband_codes_custom.json', 'utf8', (err, data) => {
         if (err) throw err;
         const wristbandCodes = JSON.parse(data);
         res.send(wristbandCodes)
@@ -220,12 +220,12 @@ app.get("/poolID_settings", (req, res) => {
 app.get("/poolID", (req, res) => {
     const fs = require('fs');
 
-    fs.readFile("/home/pi/HighlightReel/core/res/config.json", 'utf8', (err, data) => {
+    fs.readFile("/home/pi/HighlightReel/core/res/config-custom.json", 'utf8', (err, data) => {
         if (err) throw err;
         const config = JSON.parse(data)
         const poolId = config["poolID"]
 
-        if(poolId == null){
+        if(poolId == null || poolId == ""){
             res.send("No Pool ID Set!")
         }
         else{
@@ -237,13 +237,16 @@ app.get("/poolID", (req, res) => {
 app.post("/poolID", (req, res) => {
     const fs = require('fs');
 
-    var name = "/home/pi/HighlightReel/core/res/config.json"
+    var name = "/home/pi/HighlightReel/core/res/config-custom.json"
     
+    console.log(req.body.poolID);
+
     fs.readFile(name, 'utf8', (err, data) => {
         if (err) throw err;
         var config = JSON.parse(data)
+        var s = req.body.poolID
 
-        config['poolID'] = req.body.poolID
+        config['poolID'] = s.trim()
 
         var modifiedConfig = JSON.stringify(config, null, "\t")
         fs.writeFileSync(name, modifiedConfig)

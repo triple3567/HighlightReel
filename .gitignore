@@ -2,7 +2,8 @@ core/out/*
 core/out/*/*
 web_dash/res/capture.jpg
 core/res/config-custom.json
-
+core/res/wristband_codes_custom.json
+web_dash/res/capture.jpg 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

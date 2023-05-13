@@ -23,5 +23,7 @@
 	"poolID": "",
 	"watermarkedFolder": "/home/pi/HighlightReel/core/out/watermarked/",
 	"watermarkFile": "/home/pi/HighlightReel/core/res/watermark.png",
-	"thumbnailsFolder": "/home/pi/HighlightReel/core/out/thumbnails/"
+	"thumbnailsFolder": "/home/pi/HighlightReel/core/out/thumbnails/",
+	"brightness": "0.0",
+	"analogueGain": "8"
 }
