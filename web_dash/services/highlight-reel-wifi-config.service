@@ -1,9 +1,10 @@
 [Unit]
 Description=Highlight Reel wifi naming
 After=multi-user.target
+Wants=network.target
 
 [Service]
-Type=simple
+Type=oneshot
 User=root
 Group=root
 Restart=on-failure
