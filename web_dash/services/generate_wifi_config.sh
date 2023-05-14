@@ -20,4 +20,4 @@ echo "wpa_key_mgmt=WPA-PSK" >> $file
 echo "wpa_passphrase=HighlightReelAdmin" >> $file
 echo "rsn_pairwise=CCMP" >> $file
 
-systemctl start hostapd
+systemctl restart hostapd
