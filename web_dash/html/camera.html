@@ -41,14 +41,30 @@
 <body onload="updateImageSize()">
   <img id="image" src="/home/pi/HighlightReel/web_dash/res/capture.jpg" alt="Initial Image">
   <button id="update-button">Refresh Image</button>
+  <br>
+  <label for="zoom-level">Zoom (between 0x and 6x):</label>
+  <input type="range" id="zoom-level" name="zoom level" min="0" max="6" step="0.5" value="0" onChange="changeZoom()">
+  <span id="zoom-level-result">0</span>
+  <br>
+  <label for="pan-x">Pan X (between -10 and 10):</label>
+  <input type="range" id="pan-x" name="Pan X" min="-10" max="10" step="1" value="0" onChange="changePanX()">
+  <span id="panx-result">0</span>
+  <br>
+  <label for="pan-y">Pan Y (between -10 and 10):</label>
+  <input type="range" id="pan-y" name="Pan Y" min="-10" max="10" step="1" value="0" onChange="changePanY()">
+  <span id="pany-result">0</span>
   <button id="exit-button">Exit</button>
 
   <script>
     var updateButton = document.getElementById("update-button");
     updateButton.addEventListener("click", function() {
       var image = document.getElementById("image");
+      var zoomLevel = document.getElementById("zoom-level").value;
+      var panX = document.getElementById("pan-x").value;
+      var panY = document.getElementById("pan-y").value;
+
       image.src = "/home/pi/HighlightReel/web_dash/res/loading.png";
-      fetch("/camera/refresh")
+      fetch("/camera/refresh?zoom=" + zoomLevel + "&pan_x=" + panX + "&pan_y=" + panY)
         .then(response => response.blob())
         .then(blob => {
           image.src = URL.createObjectURL(blob);
@@ -61,6 +77,25 @@
     });
 
     window.onresize = updateImageSize;
+
+    var zoom_level_result = document.getElementById("zoom-level-result");
+    var zoom_level_slider = document.getElementById("zoom-level");
+    function changeZoom(){
+      zoom_level_result.innerText = zoom_level_slider.value;
+    }
+
+    var pan_x_result = document.getElementById("panx-result");
+    var pan_x_slider = document.getElementById("pan-x");
+    function changePanX(){
+      pan_x_result.innerText = pan_x_slider.value;
+    }
+
+    var pan_y_result = document.getElementById("pany-result");
+    var pan_y_slider = document.getElementById("pan-y");
+    function changePanY(){
+      pan_y_result.innerText = pan_y_slider.value;
+    }
+
   </script>
 </body>
 </html>

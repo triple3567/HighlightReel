@@ -59,7 +59,11 @@ app.get("/camera", (req, res) => {
 app.get("/camera/refresh", (req,res) =>{
     var execSync = require('child_process').execSync;
 
-    execSync("/home/pi/HighlightReel/web_dash/scripts/capture.sh")
+    console.log(req.query.zoom)
+    console.log(req.query.pan_x)
+    console.log(req.query.pan_y)
+
+    execSync("/usr/bin/python3 /home/pi/HighlightReel/web_dash/scripts/capture.py " + req.query.zoom + " " + req.query.pan_x + " " + req.query.pan_y)
     console.log("done")
 
     res.sendFile("/home/pi/HighlightReel/web_dash/res/capture.jpg")
