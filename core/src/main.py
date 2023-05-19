@@ -23,6 +23,52 @@ def uploadVideo(outfile, config):
     uploader.setVideo(outfile)
     uploader.start()
 
+def setZoomAndPan(zoom, panX, panY, picam2):
+    if zoom == 0:
+        return picam2
+
+    sensor_resolution_x, sensor_resolution_y = picam2.sensor_resolution
+    offset_x = (sensor_resolution_x - (sensor_resolution_x / zoom)) / 2
+    offset_y = (sensor_resolution_y - (sensor_resolution_y / zoom)) / 2
+    capture_resolution_x = sensor_resolution_x - offset_x
+    capture_resolution_y = sensor_resolution_y - offset_y
+    
+    offset_x_segments = offset_x / 10
+    offset_y_segments = offset_y / 10
+
+    if panX < -10:
+        panX = -10
+    if panX > 10:
+        panX = 10
+    if panY < -10:
+        panY = -10
+    if panY > 10:
+        panY = 10
+
+    pan_offset_x = offset_x_segments * panX
+    pan_offset_y = offset_y_segments * panY
+
+    x_start = int(offset_x + pan_offset_x)
+    y_start = int(offset_y + pan_offset_y)
+    x_end = int(capture_resolution_x + pan_offset_x)
+    y_end = int(capture_resolution_y + pan_offset_y)
+
+    print(f"{x_start}, {y_start}, {x_end}, {y_end}")
+
+    if x_start < 0:
+        x_start = 0
+    if y_start < 0:
+        y_start = 0
+    if x_end > sensor_resolution_x:
+        x_end = sensor_resolution_x
+    if y_end > sensor_resolution_y:
+        y_end = sensor_resolution_y
+
+
+    picam2.set_controls({"ScalerCrop": (x_start, y_start, x_end, y_end)})
+
+    return picam2
+
 def configurePicam(config):
     picam2 = Picamera2()
     video_config = picam2.create_video_configuration(
@@ -52,6 +98,8 @@ def configurePicam(config):
     )
     video_config["transform"] = Transform(vflip=1, hflip=1)
     picam2.configure(video_config)
+    picam2 = setZoomAndPan(config.ZOOM, config.PAN_X, config.PAN_Y, picam2)
+
     encoder = H264Encoder(bitrate=config.VIDEO_BITRATE)
     output = CircularOutput(
         buffersize=int(config.FRAMES_PER_SECOND*config.VIDEO_LENGTH)
