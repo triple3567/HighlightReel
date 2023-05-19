@@ -66,6 +66,21 @@ app.get("/camera/refresh", (req,res) =>{
     execSync("/usr/bin/python3 /home/pi/HighlightReel/web_dash/scripts/capture.py " + req.query.zoom + " " + req.query.pan_x + " " + req.query.pan_y)
     console.log("done")
 
+    const fs = require('fs');
+    var name = "/home/pi/HighlightReel/core/res/config-custom.json"
+    fs.readFile(name, 'utf8', (err, data) => {
+        if (err) throw err;
+        var config = JSON.parse(data)
+
+        config['zoom'] = req.query.zoom.trim()
+        config['panX'] = req.query.pan_x.trim()
+        config['panY'] = req.query.pan_y.trim()
+
+        var modifiedConfig = JSON.stringify(config, null, "\t")
+        fs.writeFileSync(name, modifiedConfig)
+    })
+
+
     res.sendFile("/home/pi/HighlightReel/web_dash/res/capture.jpg")
 })
 
