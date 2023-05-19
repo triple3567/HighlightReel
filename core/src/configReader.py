@@ -6,6 +6,28 @@ class configReader():
         if not self.hasCustomConfig():
             self.createCustomConfig()
 
+        self.updateCustomConfig()
+
+    def updateCustomConfig(self):
+        default_config = json.loads(open("/home/pi/HighlightReel/core/res/config.json").read())
+        custom_config = json.loads(open(self.filename).read())
+
+        for key in default_config:
+            if key not in custom_config:
+                custom_config.update({key: default_config[key]})
+
+        remove_list = []
+        for key in custom_config:
+            if key not in default_config:
+                remove_list.append(key)
+        
+        for key in remove_list:
+            custom_config.pop(key)
+
+        with open(self.filename, "w") as out:
+            json.dump(custom_config, out, indent = 4)
+
+
     def createCustomConfig(self):
         shutil.copyfile("/home/pi/HighlightReel/core/res/config.json", "/home/pi/HighlightReel/core/res/config-custom.json")
         os.chmod("/home/pi/HighlightReel/core/res/config-custom.json", stat.S_IRWXG | stat.S_IRWXU | stat.S_IRWXO)
@@ -39,3 +61,6 @@ class configReader():
         self.THUMBNAILS_FOLDER = self.CONFIG["thumbnailsFolder"]
         self.BRIGHTNESS = float(self.CONFIG["brightness"])
         self.ANALOGUE_GAIN = int(self.CONFIG["analogueGain"])
+        self.ZOOM = float(self.CONFIG["zoom"])
+        self.PAN_X = int(self.CONFIG["panX"])
+        self.PAN_Y = int(self.CONFIG["panY"])
