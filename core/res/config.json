@@ -25,5 +25,8 @@
 	"watermarkFile": "/home/pi/HighlightReel/core/res/watermark.png",
 	"thumbnailsFolder": "/home/pi/HighlightReel/core/out/thumbnails/",
 	"brightness": "0.0",
-	"analogueGain": "8"
+	"analogueGain": "8",
+	"zoom": "0.0",
+	"panX": "0",
+	"panY": "0"
 }
