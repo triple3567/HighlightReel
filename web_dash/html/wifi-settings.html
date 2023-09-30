@@ -19,6 +19,8 @@
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 1rem;
+        table-layout: fixed;
+        word-wrap: break-word;
       }
 
       th,
@@ -26,6 +28,7 @@
         text-align: left;
         padding: 0.5rem;
         border-bottom: 1px solid #ddd;
+        text-wrap: wrap;
       }
 
       th {
@@ -58,9 +61,18 @@
         border: 1px solid #ddd;
         border-radius: 0.25rem;
       }
+      #connected-wifi {
+            font-size: 1rem;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            background-color: #e6e6e6;
+            border: 1px solid #ddd;
+            border-radius: 0.25rem;
+      }
     </style>
   </head>
   <body>
+    <div id="connected-wifi">testet</div>
     <table id="wifi-table">
       <thead>
         <tr>
@@ -75,6 +87,28 @@
     <button id="exit-btn">Exit</button>
 
     <script>
+      function updateConnectedWifi() {
+        fetch('/connected-wifi')
+            .then((response) => response.text())
+            .then((data) => {
+                const connectedWifi = document.querySelector('#connected-wifi');
+                if (data) {
+                    connectedWifi.innerHTML=`Connected WiFi: ${data}`;
+                } else {
+                    connectedWifi.innerHTML='Not connected to any WiFi network.';
+                }
+            })
+            .catch((error) => console.error(error));
+
+        connectedWifi.innerHTML='test test'
+      }
+
+      function refreshConnectedWifi() {
+        clearInterval(updateConnectedWifi);
+        updateConnectedWifi();
+        setInterval(updateConnectedWifi, 10000); // Refresh every 10 seconds (10,000 milliseconds)
+      }
+
       function createRow(networkName) {
         const row = document.createElement('tr');
         const networkNameCell = document.createElement('td');
@@ -99,6 +133,7 @@
               .then((data) => console.log(data))
               .catch((error) => console.error(error));
           }
+          setTimeout(refreshConnectedWifi, 10000);
         });
         connectBtnCell.appendChild(connectBtn);
         row.appendChild(networkNameCell);
@@ -122,7 +157,10 @@
           .catch((error) => console.error(error));
       }
 
+      
+
       document.addEventListener('DOMContentLoaded', () => {
+        refreshConnectedWifi();
         getNetworks();
       });
 
@@ -135,6 +173,8 @@
       exitBtn.addEventListener('click', () => {
         window.location.href = '/settings';
       });
+
+      
     </script>
   </body>
 </html>

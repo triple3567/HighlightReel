@@ -36,21 +36,6 @@ app.get("/", (req, res) => {
     }
 });
 
-app.post("/configureWifi", (req, res) => {
-    console.log("recieved post request to /configureWifi")
-    console.log(req.body.ssid)
-    console.log(req.body.psk)
-
-    var exec = require('child_process').exec;
-    exec("/home/pi/HighlightReel/web_dash/scripts/configure_wifi.sh" + " \"" + req.body.ssid + "\"  \"" + req.body.psk + "\"", 
-        function(err, stdout, stderr) {
-            console.log(stdout)
-            console.log(stderr)
-    })
-
-    res.sendFile("/home/pi/HighlightReel/web_dash/html/connecting.html")
-});
-
 app.get("/camera", (req, res) => {
     res.sendFile("/home/pi/HighlightReel/web_dash/html/camera.html");
 });
@@ -164,6 +149,33 @@ app.get("/wifi-list", (req, res) => {
     console.log(result_array)
     res.send(result_array)
 });
+
+app.post("/configureWifi", (req, res) => {
+    console.log("recieved post request to /configureWifi")
+    console.log(req.body.ssid)
+    console.log(req.body.psk)
+
+    var exec = require('child_process').exec;
+    exec("/home/pi/HighlightReel/web_dash/scripts/configure_wifi.sh" + " \"" + req.body.ssid + "\"  \"" + req.body.psk + "\"", 
+        function(err, stdout, stderr) {
+            console.log(stdout)
+            console.log(stderr)
+    })
+
+    res.sendFile("/home/pi/HighlightReel/web_dash/html/connecting.html")
+});
+
+app.get("/connected-wifi", (req, res) => {
+    var execSync = require('child_process').execSync;
+    
+    try {
+        let result = String(execSync("/home/pi/HighlightReel/web_dash/scripts/get_wifi_name.sh"))
+        res.send(result);
+    }
+    catch (err){
+        res.send()
+    }
+})
 
 app.get("/wifi-settings", (req, res) => {
     res.sendFile("/home/pi/HighlightReel/web_dash/html/wifi-settings.html")
