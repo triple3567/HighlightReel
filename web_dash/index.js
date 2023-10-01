@@ -4,6 +4,7 @@ const app = express();
 const bodyParser = require('body-parser');
 var multer = require('multer');
 const { executionAsyncId } = require("async_hooks");
+const { listenerCount } = require("process");
 var upload = multer();
 var hostname = '192.168.4.1';
 var PORT = 8000;
@@ -124,6 +125,9 @@ app.get("/update_and_reboot", (req, res) => {
     res.sendFile("/home/pi/HighlightReel/web_dash/html/restart.html")
 })
 
+app.get("/wifi-list-reload", (req, res) => {
+    res.sendFile("/home/pi/HighlightReel/web_dash/html/wifi-list-reload.html")
+})
 
 app.get("/wifi-list", (req, res) => {
     var execSync = require('child_process').execSync;

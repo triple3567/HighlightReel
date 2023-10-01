@@ -129,11 +129,11 @@
               },
               body
             })
-              .then((response) => response.json())
-              .then((data) => console.log(data))
-              .catch((error) => console.error(error));
+            .then((response) => response.json())
+            .then((data) => console.log(data))
+            .catch((error) => console.error(error));
+            location.href = "/wifi-list-reload"
           }
-          setTimeout(refreshConnectedWifi, 10000);
         });
         connectBtnCell.appendChild(connectBtn);
         row.appendChild(networkNameCell);
