@@ -6,7 +6,7 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
 fi
 
 DIR="/home/pi/HighlightReel/core/services"
-services=("highlight-reel.service")
+services=("highlight-reel.service" "highlight-reel-updater.service")
 
 for s in ${services[@]}; do
     FILE="$DIR/$s"

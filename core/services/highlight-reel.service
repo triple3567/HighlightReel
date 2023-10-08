@@ -1,6 +1,6 @@
 [Unit]
 Description=Highlight Reel core functionality
-After=multi-user.target
+After=highlight-reel-updater.service
  
 [Service]
 Type=simple

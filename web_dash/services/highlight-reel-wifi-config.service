@@ -1,6 +1,6 @@
 [Unit]
 Description=Highlight Reel wifi naming
-After=multi-user.target
+After=highlight-reel-updater.service
 Wants=network.target
 
 [Service]
