@@ -54,15 +54,19 @@ class videoUploader(threading.Thread):
                 r = requests.post(
                     self.httpPostRequestUri, 
                     files={basename: f}, 
-                    data=metadata
+                    data=metadata,
+		    timeout=1800
                 )
 
-                response = r.json()
+                print(f"done uploading video[{basename}]")
+                os.rename(self.outfile, self.config.SENT_FOLDER + basename)
 
-                if response["status"] == "error":
-                    print(f"error uploading video[{basename}]")
-                    message = response["message"]
-                    print(f"message: {message}")
-                else:
-                    print(f"success uploading video[{basename}]")
-                    os.rename(self.outfile, self.config.SENT_FOLDER + basename)
+                #response = r.json()
+
+                #if response["status"] == "error":
+                #    print(f"error uploading video[{basename}]")
+                #    message = response["message"]
+                #    print(f"message: {message}")
+                #else:
+                #    print(f"success uploading video[{basename}]")
+                #    os.rename(self.outfile, self.config.SENT_FOLDER + basename)

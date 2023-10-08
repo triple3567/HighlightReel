@@ -1,10 +1,8 @@
 web_dash/res/capture.jpg
 core/out/*
 core/out/*/*
-web_dash/res/capture.jpg
 core/res/config-custom.json
-core/res/wristband_codes_custom.json
-web_dash/res/capture.jpg 
+core/res/wristband_codes_custom.json 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -134,3 +132,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+web_dash/res/capture.jpg
