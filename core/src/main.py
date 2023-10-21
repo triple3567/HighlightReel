@@ -1,6 +1,7 @@
 from receiverHandler import receiverHandler
 from videoUploader import videoUploader
 from videoWriter import videoWriter
+from logUploader import logUploader
 from outputQueueHandler import outputQueueHandler
 from configReader import configReader
 from picamera2.encoders import H264Encoder
@@ -125,8 +126,6 @@ def configureLogger():
 
 
 def main():
-    configureLogger()
-    logging.info("Starting Highlight Reel...")
 
     #Parse arguments
     args = parseArgs()
@@ -135,9 +134,11 @@ def main():
     config = configReader()
     config.readConfig()
 
-    outfile = None
-    logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S',
-                        format='%(asctime)-15s - [%(levelname)s] %(module)s: %(message)s', )
+    #Initialize Logging
+    lg = logUploader(config)
+    configureLogger()
+    logging.info("Starting Highlight Reel...")
+    lg.start()
 
     # INITIALIZE CAMERA ENDCODER AND OUTPUT OBJECTS
     picam2, output = configurePicam(config)

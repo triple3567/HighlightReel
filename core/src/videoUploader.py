@@ -49,7 +49,7 @@ class videoUploader(threading.Thread):
         if not self.supress_upload:
             with open(self.outfile, 'rb') as f:
 
-                logging.info(f"Starting to upload {basename} with metadata:\nf{metadata}")
+                logging.info(f"Starting to upload {basename} with metadata:\tf{metadata}")
 
                 try:
                     r = requests.post(
@@ -59,8 +59,8 @@ class videoUploader(threading.Thread):
                         timeout=900
                     )
 
-                    logging.info(f"Success uploading video {basename}")
+                    logging.info(f"Success uploading video {basename}. Got Response {r}")
                     os.rename(self.outfile, self.config.SENT_FOLDER + basename)
                     
                 except requests.exceptions.RequestException as e:
-                    logging.error("requests.exceptions.RequestException", exc_info=True)
+                    logging.error("requests.exceptions.RequestException... Error uploading video {basename}", exc_info=True)
