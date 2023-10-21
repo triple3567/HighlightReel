@@ -1,7 +1,7 @@
 from videoUploader import videoUploader
 from datetime import datetime
 import subprocess
-import time, threading, os
+import time, threading, os, logging
 
 class videoWriter(threading.Thread):
     def __init__(self, config, output, supress_upload, triggeredBy):
@@ -32,9 +32,6 @@ class videoWriter(threading.Thread):
         self.mp4FileName = os.path.basename(self.mp4File)
 
     def convertToMP4(self):
-        print(self.videoPath)
-        print(self.videoName)
-        print(self.videoNameNoExtention)
         self.mp4File = self.config.CONVERTED_FOLDER + self.videoNameNoExtention + ".mp4"
         command = [
             "MP4Box",
@@ -45,52 +42,15 @@ class videoWriter(threading.Thread):
         subprocess.run(command)
 
         os.remove(self.videoPath)
-    
-    def addWatermark(self):
-        self.watermarkedFile = self.config.WATERMARKED_FOLDER + self.mp4FileName 
-        command = f"cpulimit --limit=100 -- /usr/bin/ffmpeg -y -i {self.mp4File} -i {self.config.WATERMARK} -filter_complex \"overlay \" {self.watermarkedFile}"
-        command = [
-            "/usr/bin/cpulimit" ,
-            "-f",
-            "--limit=200",
-            "--",
-            "/usr/bin/ffmpeg",
-            "-y",
-            "-i",
-            f"{self.mp4File}",
-            "-i",
-            f"{self.config.WATERMARK}",
-            "-filter_complex",
-            "overlay ",
-            f"{self.watermarkedFile}"
-        ]
-        subprocess.run(command)
-
-        os.remove(self.mp4File)
-
-    def generateThumbnail(self):
-        self.thumbnailFile = self.config.THUMBNAILS_FOLDER + self.videoNameNoExtention + ".jpg"
-        command = [
-            "/usr/bin/ffmpeg",
-            "-i",
-            f"{self.watermarkedFile}",
-            "-ss",
-            "00:00:00.000",
-            "-vframes",
-            "1",
-            f"{self.thumbnailFile}"
-        ]
-        subprocess.run(command)
-
 
     def run(self):
-        print("Starting output")
         outfile = self.getOutfile(self.config.QUEUE_FOLDER, self.config.FILE_EXTENSION)
+        logging.info(f"Writing {outfile}, triggered by {self.triggeredBy}")
+
         self.output.fileoutput = outfile
         self.output.start()
         time.sleep(self.config.OUTPUT_START_SLEEP_TIME)
 
-        print("Stopping output")
         self.output.stop()
         time.sleep(self.config.OUTPUT_STOP_SLEEP_TIME)
 
@@ -99,5 +59,7 @@ class videoWriter(threading.Thread):
 
         # convert to mp4
         self.convertToMP4()
+
+        logging.info(f"converted {self.videoPath} to {self.videoNameNoExtention} triggered by {self.triggeredBy}")
 
         self.uploadVideo(self.mp4File)

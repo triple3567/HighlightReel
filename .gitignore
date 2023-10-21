@@ -1,6 +1,7 @@
 web_dash/res/capture.jpg
 core/out/*
 core/out/*/*
+core/out/logs/*
 core/res/config-custom.json
 core/res/wristband_codes_custom.json 
 # Byte-compiled / optimized / DLL files
