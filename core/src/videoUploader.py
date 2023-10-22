@@ -1,5 +1,5 @@
-import json, threading, requests, os, ffmpeg, pprint, time
 from subprocess import call 
+import json, threading, requests, os, ffmpeg, pprint, time, logging
 
 class videoUploader(threading.Thread):
     def __init__(self, outfile, config, supress_upload, triggeredBy):
@@ -45,28 +45,22 @@ class videoUploader(threading.Thread):
         "poolID": str(self.config.POOL_ID)
         }
 
-        pprint.pprint(metadata)
-
         basename = os.path.basename(self.outfile)
         if not self.supress_upload:
             with open(self.outfile, 'rb') as f:
-                print(f"uploading video[{basename}] to HRCore")
-                r = requests.post(
-                    self.httpPostRequestUri, 
-                    files={basename: f}, 
-                    data=metadata,
-		    timeout=1800
-                )
 
-                print(f"done uploading video[{basename}]")
-                os.rename(self.outfile, self.config.SENT_FOLDER + basename)
+                logging.info(f"Starting to upload {basename} with metadata:\tf{metadata}")
 
-                #response = r.json()
+                try:
+                    r = requests.post(
+                        self.httpPostRequestUri, 
+                        files={basename: f}, 
+                        data=metadata,
+                        timeout=900
+                    )
 
-                #if response["status"] == "error":
-                #    print(f"error uploading video[{basename}]")
-                #    message = response["message"]
-                #    print(f"message: {message}")
-                #else:
-                #    print(f"success uploading video[{basename}]")
-                #    os.rename(self.outfile, self.config.SENT_FOLDER + basename)
+                    logging.info(f"Success uploading video {basename}. Got Response {r}")
+                    os.rename(self.outfile, self.config.SENT_FOLDER + basename)
+                    
+                except requests.exceptions.RequestException as e:
+                    logging.error("requests.exceptions.RequestException... Error uploading video {basename}", exc_info=True)

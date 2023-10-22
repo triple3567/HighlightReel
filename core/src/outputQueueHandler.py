@@ -1,5 +1,5 @@
-import time, threading
 from videoWriter import videoWriter
+import time, threading, logging
 
 class outputQueueHandler(threading.Thread):
     def __init__(self, config, supress_upload):
@@ -11,7 +11,7 @@ class outputQueueHandler(threading.Thread):
 
     def push(self, output, triggeredBy):
         self.queue.append((output, triggeredBy))
-        print(f"Added output to queue triggered by {triggeredBy}")
+        logging.debug(f"Added output to queue triggered by {triggeredBy}")
 
     def run(self):
         while True:
@@ -19,6 +19,8 @@ class outputQueueHandler(threading.Thread):
                 element = self.queue.pop()
                 output = element[0]
                 triggeredBy = element[1]
+
+                logging.debug(f"Popping element triggered by {triggeredBy} from the output queue")
 
                 writer = videoWriter(self.config, output, self.supress_upload, triggeredBy)
                 writer.start()

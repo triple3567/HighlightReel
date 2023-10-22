@@ -1,6 +1,7 @@
 from receiverHandler import receiverHandler
 from videoUploader import videoUploader
 from videoWriter import videoWriter
+from logUploader import logUploader
 from outputQueueHandler import outputQueueHandler
 from configReader import configReader
 from picamera2.encoders import H264Encoder
@@ -9,8 +10,7 @@ from picamera2 import Picamera2
 from datetime import datetime
 from libcamera import controls, Transform
 from libcamera import Transform
-from systemd.journal import JournalHandler
-import time, json, logging, sys, argparse, copy
+import time, json, logging, sys, argparse, copy, logging
 
 # Get filename
 def getOutfile(outfolder, fileExtension):
@@ -115,11 +115,17 @@ def parseArgs():
     args = parser.parse_args()
     return args
 
+def configureLogger():
+    logging.Formatter.converter = time.gmtime
+    now = time.strftime("%y-%m-%d_%H:%M:%S", time.gmtime())
+    logging.basicConfig(format='%(levelname)s - %(asctime)s - %(message)s', 
+                        level=logging.DEBUG,
+                        filename=f"/home/pi/HighlightReel/core/out/logs/{now}UTC.log",
+                        filemode="a+"
+                        )
+
 
 def main():
-    logger = logging.getLogger(__name__)
-    logger.addHandler(JournalHandler())
-    logger.setLevel(logging.INFO)
 
     #Parse arguments
     args = parseArgs()
@@ -128,9 +134,11 @@ def main():
     config = configReader()
     config.readConfig()
 
-    outfile = None
-    logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S',
-                        format='%(asctime)-15s - [%(levelname)s] %(module)s: %(message)s', )
+    #Initialize Logging
+    lg = logUploader(config)
+    configureLogger()
+    logging.info("Starting Highlight Reel...")
+    lg.start()
 
     # INITIALIZE CAMERA ENDCODER AND OUTPUT OBJECTS
     picam2, output = configurePicam(config)
@@ -145,12 +153,13 @@ def main():
     input.start()
 
     # MAIN LOOP
-    print("Listening for codes on reciever")
+    logging.info("Listening for codes on reciever")
     sys.stdout.flush()
     while True:
 
         isInput, triggeredBy = input.isTriggered()
         if isInput:
+            logging.info(f"Clip requested by {triggeredBy}")
             output_copy = copy.copy(output)
             output_copy._circular = output._circular.copy()
             outputHandler.push(output_copy, triggeredBy)
