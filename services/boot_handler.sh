@@ -34,6 +34,8 @@ git reset --hard origin/main && \
 git checkout -f main && \
 git pull -f
 
+chown -R highlightreel:highlightreel /home/pi/HighlightReel
+
 # sudo systemctl enable highlight-reel-wifi-config.service
 # sudo systemctl enable highlight-reel.service
 # sudo systemctl enable highlight-reel-controls.service
