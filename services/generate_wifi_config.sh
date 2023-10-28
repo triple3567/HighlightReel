@@ -21,3 +21,7 @@ echo "wpa_passphrase=HighlightReelAdmin" >> $file
 echo "rsn_pairwise=CCMP" >> $file
 
 systemctl restart hostapd
+
+echo "successful wifi-config setup"
+
+exit 0

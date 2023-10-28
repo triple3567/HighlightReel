@@ -8,6 +8,7 @@ User=highlightreel
 Group=highlightreel
 Restart=on-failure
 RestartSec=5s
+WorkingDirectory=/home/pi/HighlightReel
 ExecStart=/usr/local/bin/node /home/pi/HighlightReel/web_dash/index.js
 
 [Install]
