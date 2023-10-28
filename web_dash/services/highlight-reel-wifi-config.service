@@ -1,6 +1,5 @@
 [Unit]
 Description=Highlight Reel wifi naming
-After=highlight-reel-updater.service
 Wants=network.target
 
 [Service]
@@ -9,6 +8,8 @@ User=root
 Group=root
 Restart=on-failure
 RestartSec=5s
+WorkingDirectory=/home/pi/HighlightReel
+ExecStartPre=/home/pi/HighlightReel/core/boot_handler.sh
 ExecStart=/bin/bash /home/pi/HighlightReel/web_dash/services/generate_wifi_config.sh
 
 [Install]

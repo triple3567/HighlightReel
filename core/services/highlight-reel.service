@@ -1,12 +1,12 @@
 [Unit]
 Description=Highlight Reel core functionality
-After=highlight-reel-updater.service
+After=highlight-reel-wifi-config.service
  
 [Service]
 Type=simple
 User=highlightreel
 Group=highlightreel
-Restart=on-failure
+Restart=always
 RestartSec=5s
 ExecStart=/usr/bin/python3 /home/pi/HighlightReel/core/src/main.py
 
