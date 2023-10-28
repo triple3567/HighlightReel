@@ -1,6 +1,6 @@
 [Unit]
 Description=Highlight Reel core functionality
-After=highlight-reel-wifi-config.service
+After=highlight-reel-controls.service
  
 [Service]
 Type=simple

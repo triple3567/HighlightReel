@@ -1,6 +1,6 @@
 [Unit]
 Description=Auto updates highlight reel on boot. Bypass if in develop branch
-After=multi-user.target
+After=network.target
  
 [Service]
 Type=oneshot
@@ -9,7 +9,8 @@ Group=highlightreel
 Restart=on-failure
 RestartSec=5s
 WorkingDirectory=/home/pi/HighlightReel/core
-ExecStart=/home/pi/HighlightReel/core/boot_handler.sh
+ExecStart=/home/pi/HighlightReel/services/boot_handler.sh
+RemainAfterExit=true
 
 [Install]
 WantedBy=multi-user.target

@@ -5,8 +5,8 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
     exit
 fi
 
-DIR="/home/pi/HighlightReel/web_dash/services"
-services=("highlight-reel-controls.service" "highlight-reel-wifi-config.service")
+DIR="/home/pi/HighlightReel/services"
+services=("highlight-reel-updater.service" "highlight-reel-wifi-config.service" "highlight-reel-controls.service" "highlight-reel.service")
 
 for s in ${services[@]}; do
     FILE="$DIR/$s"
