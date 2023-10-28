@@ -14,9 +14,9 @@ git reset --hard origin/main && \
 git checkout -f main && \
 git pull -f
 
-sudo systemctl restart highlight-reel-wifi-config.service
-sudo systemctl restart highlight-reel.service
-sudo systemctl restart highlight-reel-controls.service
+sudo systemctl enable highlight-reel-wifi-config.service
+sudo systemctl enable highlight-reel.service
+sudo systemctl enable highlight-reel-controls.service
 
 echo "Auto-updater success."
 
