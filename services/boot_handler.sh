@@ -28,12 +28,11 @@ else
     exit 0
 fi
 
+chmod -R 777 /home/pi/HighlightReel && \
 cd /home/pi/HighlightReel && \
 git reset --hard origin/main && \
 git checkout -f main && \
 git pull -f
-
-chmod -R 777 /home/pi/HighlightReel
 
 # sudo systemctl enable highlight-reel-wifi-config.service
 # sudo systemctl enable highlight-reel.service
