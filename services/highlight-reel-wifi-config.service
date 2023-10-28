@@ -9,7 +9,7 @@ Group=root
 Restart=on-failure
 RestartSec=5s
 WorkingDirectory=/home/pi/HighlightReel/web_dash
-ExecStart=/bin/bash /home/pi/HighlightReel/web_dash/services/generate_wifi_config.sh
+ExecStart=/bin/bash /home/pi/HighlightReel/services/generate_wifi_config.sh
 RemainAfterExit=true
 
 [Install]
