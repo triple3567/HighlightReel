@@ -115,12 +115,26 @@ def parseArgs():
     args = parser.parse_args()
     return args
 
+def getHardwareID():
+        # Extract serial from cpuinfo file
+        cpuserial = "0000000000000000"
+        try:
+            f = open('/proc/cpuinfo','r')
+            for line in f:
+                if line[0:6]=='Serial':
+                    cpuserial = line[10:26]
+            f.close()
+        except:
+            cpuserial = "ERROR000000000"
+    
+        return cpuserial
+
 def configureLogger():
     logging.Formatter.converter = time.gmtime
     now = time.strftime("%y-%m-%d_%H:%M:%S", time.gmtime())
     logging.basicConfig(format='%(levelname)s - %(asctime)s - %(message)s', 
                         level=logging.DEBUG,
-                        filename=f"/home/pi/HighlightReel/core/out/logs/{now}UTC.log",
+                        filename=f"/home/pi/HighlightReel/core/out/logs/{getHardwareID}_{now}UTC.log",
                         filemode="a+"
                         )
 
