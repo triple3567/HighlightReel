@@ -1,4 +1,4 @@
-import json, os, stat, shutil
+import json, os, stat, shutil, logging
 
 class configReader():
     def __init__(self):
@@ -34,6 +34,9 @@ class configReader():
 
     def hasCustomConfig(self):
         return os.path.isfile("/home/pi/HighlightReel/core/res/config-custom.json")
+
+    def logConfig(self):
+        logging.info(f"Config is: {self.CONFIG}")
 
     def readConfig(self):
         self.CONFIG_FILE = open(self.filename)

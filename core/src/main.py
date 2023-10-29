@@ -154,6 +154,9 @@ def main():
     logging.info("Starting Highlight Reel...")
     lg.start()
 
+    #Log config settings
+    config.logConfig()
+
     # INITIALIZE CAMERA ENDCODER AND OUTPUT OBJECTS
     picam2, output = configurePicam(config)
     time.sleep(config.OUTPUT_RESET_SLEEP_TIME)
