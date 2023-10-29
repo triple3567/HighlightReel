@@ -134,7 +134,7 @@ def configureLogger():
     now = time.strftime("%y-%m-%d_%H:%M:%S", time.gmtime())
     logging.basicConfig(format='%(levelname)s - %(asctime)s - %(message)s', 
                         level=logging.DEBUG,
-                        filename=f"/home/pi/HighlightReel/core/out/logs/{getHardwareID}_{now}UTC.log",
+                        filename=f"/home/pi/HighlightReel/core/out/logs/{getHardwareID()}_{now}UTC.log",
                         filemode="a+"
                         )
 
