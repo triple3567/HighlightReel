@@ -30,12 +30,12 @@ fi
 
 chmod -R 777 /home/pi/HighlightReel && \
 cd /home/pi/HighlightReel && \
-git fetch --all && \
+git fetch -v --all && \
 git reset --hard origin/main && \
 git checkout -f main && \
-git pull -f
+git pull -f -v
 
-chown -R highlightreel:highlightreel /home/pi/HighlightReel
+sudo chown -R highlightreel:highlightreel /home/pi/HighlightReel
 
 # sudo systemctl enable highlight-reel-wifi-config.service
 # sudo systemctl enable highlight-reel.service
