@@ -4,6 +4,7 @@ core/out/*/*
 core/out/logs/*
 core/res/config-custom.json
 core/res/wristband_codes_custom.json 
+/home/pi/HighlightReel/core/res/highlightreel.db
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
