@@ -30,6 +30,7 @@ fi
 
 chmod -R 777 /home/pi/HighlightReel && \
 cd /home/pi/HighlightReel && \
+git fetch --all && \
 git reset --hard origin/main && \
 git checkout -f main && \
 git pull -f
