@@ -10,18 +10,28 @@ from picamera2 import Picamera2
 from datetime import datetime
 from libcamera import controls, Transform
 from libcamera import Transform
-import time, json, logging, sys, argparse, copy, logging
+import time, json, logging, sys, argparse, copy, logging, sqlite3
 
-# Get filename
-def getOutfile(outfolder, fileExtension):
-    filename = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    outfile = outfolder + filename + fileExtension
-    return outfile
+def setupUploadQueue():
+    con = sqlite3.connect("/home/pi/HighlightReel/core/res/highlightreel.db")
+    cur = con.cursor()
+    create_table_statement = """
+    CREATE TABLE IF NOT EXISTS upload_queue (
+        outfile TEXT NOT NULL,
+        triggered_by TEXT NOT NULL,
+        utc_time REAL NOT NULL
+    );
+    """
+    cur.execute(create_table_statement)
 
-def uploadVideo(outfile, config):
-    uploader = videoUploader(config) 
-    uploader.setVideo(outfile)
-    uploader.start()
+def clearUploadQueue():
+    con = sqlite3.connect("/home/pi/HighlightReel/core/res/highlightreel.db")
+    cur = con.cursor()
+    clear_table_statement = """
+    DELETE FROM upload_queue;
+    """
+    cur.execute(clear_table_statement)
+    con.commit()
 
 def setZoomAndPan(zoom, panX, panY, picam2):
     if zoom == 0:
@@ -157,6 +167,10 @@ def main():
     #Log config settings
     config.logConfig()
 
+    #Setup Upload Queue DB
+    setupUploadQueue()
+    clearUploadQueue()
+
     # INITIALIZE CAMERA ENDCODER AND OUTPUT OBJECTS
     picam2, output = configurePicam(config)
     time.sleep(config.OUTPUT_RESET_SLEEP_TIME)
@@ -168,6 +182,10 @@ def main():
     # INITIALIZE RF RECIEVER
     input = receiverHandler(config)
     input.start()
+
+    # Start video Uploader
+    vUploader = videoUploader(config, args.supress_upload)
+    vUploader.start()
 
     # MAIN LOOP
     logging.info("Listening for codes on reciever")
