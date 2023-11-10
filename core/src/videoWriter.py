@@ -1,7 +1,6 @@
-from videoUploader import videoUploader
 from datetime import datetime
 import subprocess
-import time, threading, os, logging
+import time, threading, os, logging, sqlite3
 
 class videoWriter(threading.Thread):
     def __init__(self, config, output, supress_upload, triggeredBy):
@@ -13,16 +12,22 @@ class videoWriter(threading.Thread):
         self.supress_upload = supress_upload
         self.triggeredBy = triggeredBy
 
+    def addVideoToUploadQueue(self, outfile):
+        con = sqlite3.connect("/home/pi/HighlightReel/core/res/highlightreel.db")
+        cur = con.cursor()
+        add_video_statement = f"""
+        INSERT INTO upload_queue (outfile, triggered_by, utc_time)
+        VALUES
+        ('{outfile}','{self.triggeredBy}',{time.time()});
+        """
+        cur.execute(add_video_statement)
+        con.commit()
+
     # Get filename
     def getOutfile(self, outfolder, fileExtension):
         filename = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         outfile = outfolder + filename + fileExtension
         return outfile
-
-    def uploadVideo(self, outfile):
-        uploader = videoUploader(outfile, self.config, self.supress_upload, self.triggeredBy) 
-        uploader.start()
-        uploader.join()
 
     def setVideoNames(self, outfile):
         self.videoPath = outfile
@@ -62,4 +67,4 @@ class videoWriter(threading.Thread):
 
         logging.info(f"converted {self.videoPath} to {self.videoNameNoExtention} triggered by {self.triggeredBy}")
 
-        self.uploadVideo(self.mp4File)
+        self.addVideoToUploadQueue(self.mp4File)

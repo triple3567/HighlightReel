@@ -10,18 +10,41 @@ from picamera2 import Picamera2
 from datetime import datetime
 from libcamera import controls, Transform
 from libcamera import Transform
-import time, json, logging, sys, argparse, copy, logging
+import time, json, logging, sys, argparse, copy, logging, sqlite3, os, shutil
 
-# Get filename
-def getOutfile(outfolder, fileExtension):
-    filename = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    outfile = outfolder + filename + fileExtension
-    return outfile
+def clearOldVideos():
+    shutil.rmtree("/home/pi/HighlightReel/core/out/converted", ignore_errors=True)
+    shutil.rmtree("/home/pi/HighlightReel/core/out/queue", ignore_errors=True)
+    shutil.rmtree("/home/pi/HighlightReel/core/out/sent", ignore_errors=True)
+    shutil.rmtree("/home/pi/HighlightReel/core/out/thumbnails", ignore_errors=True)
+    shutil.rmtree("/home/pi/HighlightReel/core/out/watermarked", ignore_errors=True)
 
-def uploadVideo(outfile, config):
-    uploader = videoUploader(config) 
-    uploader.setVideo(outfile)
-    uploader.start()
+    os.mkdir("/home/pi/HighlightReel/core/out/converted")
+    os.mkdir("/home/pi/HighlightReel/core/out/queue")
+    os.mkdir("/home/pi/HighlightReel/core/out/sent")
+    os.mkdir("/home/pi/HighlightReel/core/out/thumbnails")
+    os.mkdir("/home/pi/HighlightReel/core/out/watermarked")
+
+def setupUploadQueue():
+    con = sqlite3.connect("/home/pi/HighlightReel/core/res/highlightreel.db")
+    cur = con.cursor()
+    create_table_statement = """
+    CREATE TABLE IF NOT EXISTS upload_queue (
+        outfile TEXT NOT NULL,
+        triggered_by TEXT NOT NULL,
+        utc_time REAL NOT NULL
+    );
+    """
+    cur.execute(create_table_statement)
+
+def clearUploadQueue():
+    con = sqlite3.connect("/home/pi/HighlightReel/core/res/highlightreel.db")
+    cur = con.cursor()
+    clear_table_statement = """
+    DELETE FROM upload_queue;
+    """
+    cur.execute(clear_table_statement)
+    con.commit()
 
 def setZoomAndPan(zoom, panX, panY, picam2):
     if zoom == 0:
@@ -133,7 +156,7 @@ def configureLogger():
     logging.Formatter.converter = time.gmtime
     now = time.strftime("%y-%m-%d_%H:%M:%S", time.gmtime())
     logging.basicConfig(format='%(levelname)s - %(asctime)s - %(message)s', 
-                        level=logging.DEBUG,
+                        level=logging.INFO,
                         filename=f"/home/pi/HighlightReel/core/out/logs/{getHardwareID()}_{now}UTC.log",
                         filemode="a+"
                         )
@@ -154,6 +177,14 @@ def main():
     logging.info("Starting Highlight Reel...")
     lg.start()
 
+    #Log config settings
+    config.logConfig()
+
+    #Setup Upload Queue DB
+    clearOldVideos()
+    setupUploadQueue()
+    clearUploadQueue()
+
     # INITIALIZE CAMERA ENDCODER AND OUTPUT OBJECTS
     picam2, output = configurePicam(config)
     time.sleep(config.OUTPUT_RESET_SLEEP_TIME)
@@ -165,6 +196,10 @@ def main():
     # INITIALIZE RF RECIEVER
     input = receiverHandler(config)
     input.start()
+
+    # Start video Uploader
+    vUploader = videoUploader(config, args.supress_upload)
+    vUploader.start()
 
     # MAIN LOOP
     logging.info("Listening for codes on reciever")

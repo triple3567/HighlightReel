@@ -18,12 +18,12 @@ class logUploader(threading.Thread):
         time.sleep(120)
         logging.info(f"Found past log files: {self.logFiles}")
 
-        for log in self.logFiles:
+        while len(self.logFiles) != 0:
+            log = self.logFiles[0]
             full_path = self.logDir + log
 
             logging.info(f"Starting upload of {full_path}")
             with open(full_path, 'rb') as f:
-
                 try:
                     r = requests.post(
                         self.httpPostRequestUri,
@@ -34,7 +34,11 @@ class logUploader(threading.Thread):
                     logging.info(f"Success uploading log {full_path}. Got Response: {r}")
                     
                     os.remove(full_path)
+                    self.logFiles.pop(0)
 
                 except requests.exceptions.RequestException as e:
                     logging.error("requests.exceptions.RequestException... Error handling log upload", exc_info=True)
+                except:
+                    logging.error(f"Error uploading video {basename}", exc_info=True)
+            time.sleep(5)
 

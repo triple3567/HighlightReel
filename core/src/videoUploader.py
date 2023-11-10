@@ -1,16 +1,14 @@
 from subprocess import call 
-import json, threading, requests, os, ffmpeg, pprint, time, logging
+import json, threading, requests, os, ffmpeg, pprint, time, logging, sqlite3
 
 class videoUploader(threading.Thread):
-    def __init__(self, outfile, config, supress_upload, triggeredBy):
+    def __init__(self, config, supress_upload):
         # calling parent class constructor
         threading.Thread.__init__(self)
 
         self.config = config
         self.supress_upload = supress_upload
-        self.outfile = outfile
         self.httpPostRequestUri = "http://52.20.31.145:5000/api/upload"
-        self.triggeredBy = triggeredBy
 
     def getHardwareID(self):
         # Extract serial from cpuinfo file
@@ -29,38 +27,69 @@ class videoUploader(threading.Thread):
     def getWristbandID(self):
         return self.triggeredBy
 
+    def getOldestVideo(self):
+        con = sqlite3.connect("/home/pi/HighlightReel/core/res/highlightreel.db")
+        cur = con.cursor()
+        select_newest_video_statement = f"""
+        SELECT * FROM upload_queue ORDER BY utc_time ASC LIMIT 1;
+        """
+        res = cur.execute(select_newest_video_statement)
+
+        return res.fetchone()
+
+    def removeOldestVideo(self, db_res):
+        con = sqlite3.connect("/home/pi/HighlightReel/core/res/highlightreel.db")
+        cur = con.cursor()
+        delete_video_statement = f"""
+        DELETE FROM upload_queue WHERE outfile = '{db_res[0]}';
+        """
+        res = cur.execute(delete_video_statement)
+        con.commit()
+
+        os.remove(db_res[0])
 
     def run(self):
 
-        videoProbe = ffmpeg.probe(self.outfile)
-        videoStream = [stream for stream in videoProbe["streams"] if stream["codec_type"] == "video"][0]
+        while True:
+            db_res = self.getOldestVideo()
 
-        metadata = {
-        "raspberryPiID": str(self.getHardwareID()),
-        "wristbandID": str(self.getWristbandID()),
-        "duration": float(videoStream["duration"]),
-        "height": int(videoStream["height"]),
-        "width" : int(videoStream["width"]),
-        "utcTime": time.time(),
-        "poolID": str(self.config.POOL_ID)
-        }
+            if db_res is not None:
+                outfile = db_res[0]
+                triggered_by = db_res[1]
+                timestamp = float(db_res[2])
 
-        basename = os.path.basename(self.outfile)
-        if not self.supress_upload:
-            with open(self.outfile, 'rb') as f:
+                videoProbe = ffmpeg.probe(outfile)
+                videoStream = [stream for stream in videoProbe["streams"] if stream["codec_type"] == "video"][0]
 
-                logging.info(f"Starting to upload {basename} with metadata:\tf{metadata}")
+                metadata = {
+                "raspberryPiID": str(self.getHardwareID()),
+                "wristbandID": str(triggered_by),
+                "duration": float(videoStream["duration"]),
+                "height": int(videoStream["height"]),
+                "width" : int(videoStream["width"]),
+                "utcTime": timestamp,
+                "poolID": str(self.config.POOL_ID)
+                }
 
-                try:
-                    r = requests.post(
-                        self.httpPostRequestUri, 
-                        files={basename: f}, 
-                        data=metadata,
-                        timeout=900
-                    )
+                basename = os.path.basename(outfile)
+                if not self.supress_upload:
+                    with open(outfile, 'rb') as f:
 
-                    logging.info(f"Success uploading video {basename}. Got Response {r}")
-                    os.rename(self.outfile, self.config.SENT_FOLDER + basename)
-                    
-                except requests.exceptions.RequestException as e:
-                    logging.error("requests.exceptions.RequestException... Error uploading video {basename}", exc_info=True)
+                        logging.info(f"Starting to upload {basename} with metadata:\tf{metadata}")
+                        try:
+                            r = requests.post(
+                            self.httpPostRequestUri, 
+                            files={basename: f}, 
+                            data=metadata,
+                            timeout=900
+                            )
+                            
+                            logging.info(f"Success uploading video {basename}. Got Response {r}")
+                            self.removeOldestVideo(db_res)
+
+                        except requests.exceptions.RequestException as e:
+                            logging.error(f"Error uploading video {basename}", exc_info=True)
+                        except:
+                            logging.error(f"Error uploading video {basename}", exc_info=True)
+
+            time.sleep(1)

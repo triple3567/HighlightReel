@@ -11,7 +11,7 @@ class outputQueueHandler(threading.Thread):
 
     def push(self, output, triggeredBy):
         self.queue.append((output, triggeredBy))
-        logging.debug(f"Added output to queue triggered by {triggeredBy}")
+        logging.info(f"Added output to queue triggered by {triggeredBy}")
 
     def run(self):
         while True:
@@ -20,7 +20,7 @@ class outputQueueHandler(threading.Thread):
                 output = element[0]
                 triggeredBy = element[1]
 
-                logging.debug(f"Popping element triggered by {triggeredBy} from the output queue")
+                logging.info(f"Popping element triggered by {triggeredBy} from the output queue")
 
                 writer = videoWriter(self.config, output, self.supress_upload, triggeredBy)
                 writer.start()
