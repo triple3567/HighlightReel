@@ -1,5 +1,7 @@
 #!/bin/bash
 
+find /home/pi/HighlightReel/core/out -type f -delete
+
 BRANCH=$(git branch --show-current)
 
 if [[ "$BRANCH" != "main" ]]; then
