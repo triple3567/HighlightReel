@@ -10,7 +10,20 @@ from picamera2 import Picamera2
 from datetime import datetime
 from libcamera import controls, Transform
 from libcamera import Transform
-import time, json, logging, sys, argparse, copy, logging, sqlite3
+import time, json, logging, sys, argparse, copy, logging, sqlite3, os, shutil
+
+def clearOldVideos():
+    shutil.rmtree("/home/pi/HighlightReel/core/out/converted", ignore_errors=True)
+    shutil.rmtree("/home/pi/HighlightReel/core/out/queue", ignore_errors=True)
+    shutil.rmtree("/home/pi/HighlightReel/core/out/sent", ignore_errors=True)
+    shutil.rmtree("/home/pi/HighlightReel/core/out/thumbnails", ignore_errors=True)
+    shutil.rmtree("/home/pi/HighlightReel/core/out/watermarked", ignore_errors=True)
+
+    os.mkdir("/home/pi/HighlightReel/core/out/converted")
+    os.mkdir("/home/pi/HighlightReel/core/out/queue")
+    os.mkdir("/home/pi/HighlightReel/core/out/sent")
+    os.mkdir("/home/pi/HighlightReel/core/out/thumbnails")
+    os.mkdir("/home/pi/HighlightReel/core/out/watermarked")
 
 def setupUploadQueue():
     con = sqlite3.connect("/home/pi/HighlightReel/core/res/highlightreel.db")
@@ -168,6 +181,7 @@ def main():
     config.logConfig()
 
     #Setup Upload Queue DB
+    clearOldVideos()
     setupUploadQueue()
     clearUploadQueue()
 
