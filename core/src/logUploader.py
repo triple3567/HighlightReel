@@ -5,6 +5,8 @@ class logUploader(threading.Thread):
         # calling parent class constructor
         threading.Thread.__init__(self)
 
+        self.createStartupLog()
+
         self.config = config
         self.httpPostRequestUri = "http://52.20.31.145:5000/api/log_upload"
         self.logDir = "/home/pi/HighlightReel/core/out/logs/"
@@ -13,6 +15,26 @@ class logUploader(threading.Thread):
         for root, dirs, files in os.walk(os.path.abspath(self.logDir)):
             for file in files:
                 self.logFiles.append(file)
+    
+    def getHardwareID(self):
+        # Extract serial from cpuinfo file
+        cpuserial = "0000000000000000"
+        try:
+            f = open('/proc/cpuinfo','r')
+            for line in f:
+                if line[0:6]=='Serial':
+                    cpuserial = line[10:26]
+            f.close()
+        except:
+            cpuserial = "ERROR000000000"
+    
+        return cpuserial
+
+    def createStartupLog(self):
+        now = time.strftime("%y-%m-%d_%H:%M:%S", time.gmtime())
+        filename = f"/home/pi/HighlightReel/core/out/logs/startup_{self.getHardwareID()}_{now}UTC.log"
+        f = open(filename, "w")
+        f.close()
 
     def run(self):
         time.sleep(120)
