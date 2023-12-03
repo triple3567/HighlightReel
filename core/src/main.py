@@ -94,34 +94,14 @@ def setZoomAndPan(zoom, panX, panY, picam2):
 
 def configurePicam(config):
     picam2 = Picamera2()
-    video_config = picam2.create_video_configuration(
-        main={
-            "size": config.MAX_DIMENSIONS, 
-            "format": config.ENCODER_CHANNELS
-        },
-        lores={
-            "size": config.MIN_DIMENSIONS, 
-            "format": "YUV420"
-        },
-        controls={
-            "NoiseReductionMode": 2, 
-            "FrameDurationLimits": (
-                config.MIN_FRAME_DURATION_LIMIT, 
-                config.MAX_FRAME_DURATION_LIMIT
-            ),
-            "AfMode": controls.AfModeEnum.Continuous,
-            "AwbEnable": True,
-            "AwbMode": controls.AwbModeEnum.Indoor,
-            "AeEnable": True,
-            "AeConstraintMode": controls.AeConstraintModeEnum.Normal,
-            "AeExposureMode": controls.AeExposureModeEnum.Normal,
-            "Brightness": config.BRIGHTNESS,
-            "AnalogueGain": config.ANALOGUE_GAIN
-        }
-    )
-    video_config["transform"] = Transform(vflip=1, hflip=1)
+    camera_config = picam2.create_preview_configuration()
+    video_config = picam2.create_video_configuration()
+    video_config['main']['size'] = (1920, 1080)
+    video_config['controls']['FrameRate'] = 40.0
+    print(video_config)
+    picam2.configure(camera_config)
     picam2.configure(video_config)
-    picam2 = setZoomAndPan(config.ZOOM, config.PAN_X, config.PAN_Y, picam2)
+    picam2.set_controls({"AfMode": controls.AfModeEnum.Continuous})
 
     encoder = H264Encoder(bitrate=config.VIDEO_BITRATE)
     output = CircularOutput(
@@ -129,6 +109,41 @@ def configurePicam(config):
     )
     picam2.start_recording(encoder, output)
     print("Filling camera buffer...")
+    # video_config = picam2.create_video_configuration(
+    #     main={
+    #         "size": config.MAX_DIMENSIONS, 
+    #         "format": config.ENCODER_CHANNELS
+    #     },
+    #     lores={
+    #         "size": config.MIN_DIMENSIONS, 
+    #         "format": "YUV420"
+    #     },
+    #     controls={
+    #         "NoiseReductionMode": 2, 
+    #         "FrameDurationLimits": (
+    #             config.MIN_FRAME_DURATION_LIMIT, 
+    #             config.MAX_FRAME_DURATION_LIMIT
+    #         ),
+    #         "AfMode": controls.AfModeEnum.Continuous,
+    #         "AwbEnable": True,
+    #         "AwbMode": controls.AwbModeEnum.Indoor,
+    #         "AeEnable": True,
+    #         "AeConstraintMode": controls.AeConstraintModeEnum.Normal,
+    #         "AeExposureMode": controls.AeExposureModeEnum.Normal,
+    #         "Brightness": config.BRIGHTNESS,
+    #         "AnalogueGain": config.ANALOGUE_GAIN
+    #     }
+    # )
+    # video_config["transform"] = Transform(vflip=1, hflip=1)
+    # picam2.configure(video_config)
+    # picam2 = setZoomAndPan(config.ZOOM, config.PAN_X, config.PAN_Y, picam2)
+
+    # encoder = H264Encoder(bitrate=config.VIDEO_BITRATE)
+    # output = CircularOutput(
+    #     buffersize=int(config.FRAMES_PER_SECOND*config.VIDEO_LENGTH)
+    # )
+    # picam2.start_recording(encoder, output)
+    # print("Filling camera buffer...")
 
     return picam2, output
 

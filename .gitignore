@@ -1,4 +1,7 @@
 web_dash/res/capture.jpg
+web_dash/node_modules
+web_dash/node_modules/**
+web_dash/node_modules/*
 core/out/*
 core/out/*/*
 core/out/logs/*
