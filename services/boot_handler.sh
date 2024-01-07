@@ -37,6 +37,10 @@ git pull -f -v
 
 chmod -R 777 /home/pi/HighlightReel
 
+echo "Running npm install..."
+cd /home/pi/HighlightReel/web_dash && \
+/usr/local/bin/npm install
+
 # sudo systemctl enable highlight-reel-wifi-config.service
 # sudo systemctl enable highlight-reel.service
 # sudo systemctl enable highlight-reel-controls.service
