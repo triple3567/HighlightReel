@@ -160,7 +160,7 @@ app.post("/configureWifi", (req, res) => {
     console.log(req.body.psk)
 
     var exec = require('child_process').exec;
-    exec("/home/pi/HighlightReel/web_dash/scripts/configure_wifi.sh" + " \"" + req.body.ssid + "\"  \"" + req.body.psk + "\"", 
+    exec("/home/pi/HighlightReel/web_dash/scripts/configure_wifi.sh" + " \'" + req.body.ssid + "\'  \'" + req.body.psk + "\'", 
         function(err, stdout, stderr) {
             console.log(stdout)
             console.log(stderr)
