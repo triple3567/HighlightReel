@@ -26,6 +26,7 @@ MAC_ADDR=$(hexdump -n 6 -ve '1/1 "%.2x "' /dev/random | awk -v a="2,6,a,e" -v r=
 sudo ip link set wlan1 down
 sudo ip link set wlan1 address $MAC_ADDR
 sudo ip link set wlan1 up
+sudo wpa_supplicant -B -iwlan1 -c /etc/wpa_supplicant/wpa_supplicant-wlan1.conf -Dnl80211,wext || true
 
 echo "successful wifi-config setup"
 
