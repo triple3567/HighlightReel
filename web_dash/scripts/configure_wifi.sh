@@ -40,7 +40,8 @@ printf "}\n" >> $NETWORK_FILE
 
 sudo /usr/sbin/wpa_supplicant -B -iwlan1 -c /etc/wpa_supplicant/wpa_supplicant-wlan1.conf -D nl80211 -D wext || true
 
-wpa_cli -i wlan1 reconfigure  
+wpa_cli -i wlan1 reconfigure
+/usr/sbin/ip link set wlan1 up
 sleep 30
 
 echo "Connected to ${WIFI_SSID}"
