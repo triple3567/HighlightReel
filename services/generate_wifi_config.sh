@@ -22,9 +22,7 @@ echo "rsn_pairwise=CCMP" >> $file
 
 systemctl restart hostapd
 
-hexchars="0123456789abcdef"
-end=$( for i in {1..6} ; do echo -n ${hexchars:$(( $RANDOM % 16 )):1} ; done | sed -e 's/\(..\)/:\1/g' )
-MAC_ADDR=00:60:2F$end
+MAC_ADDR=$(hexdump -n 6 -ve '1/1 "%.2x "' /dev/random | awk -v a="2,6,a,e" -v r="$RANDOM" 'BEGIN{srand(r);}NR==1{split(a,b,",");r=int(rand()*4+1);printf "%s%s:%s:%s:%s:%s:%s\n",substr($1,0,1),b[r],$2,$3,$4,$5,$6}')
 sudo ip link set wlan1 down
 sudo ip link set wlan1 address $MAC_ADDR
 sudo ip link set wlan1 up
