@@ -38,11 +38,10 @@ printf "\tssid=\"${WIFI_SSID}\"\n" >> $NETWORK_FILE
 printf "\tpsk=\"${WIFI_PSK}\"\n" >> $NETWORK_FILE
 printf "}\n" >> $NETWORK_FILE
 
-sudo /usr/sbin/wpa_supplicant -B -iwlan1 -c /etc/wpa_supplicant/wpa_supplicant-wlan1.conf -D nl80211 -D wext || true
+sudo /usr/bin/rm -f /var/run/wpa_supplicant/wlan1
+sudo /usr/sbin/wpa_supplicant -B -iwlan1 -c /etc/wpa_supplicant/wpa_supplicant-wlan1.conf -D wext || true
 
 wpa_cli -i wlan1 reconfigure
-/usr/sbin/ip link set wlan1 up
-sleep 30
 
 echo "Connected to ${WIFI_SSID}"
 
