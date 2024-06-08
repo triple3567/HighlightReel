@@ -95,8 +95,7 @@ def setZoomAndPan(zoom, panX, panY, picam2):
 def configurePicam(config):
     picam2 = Picamera2()
     camera_config = picam2.create_preview_configuration()
-    video_config = picam2.create_video_configuration()
-    video_config['main']['size'] = (1920, 1080)
+    video_config = picam2.create_video_configuration(main={"size": (1920, 1080)})
     video_config['controls']['FrameRate'] = 30.0
     print(video_config)
     picam2.configure(camera_config)
